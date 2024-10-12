@@ -1,0 +1,34 @@
+{
+  "name": "top_blog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch app.mjs",
+    "start": "node app.mjs",
+    "prisma": "npx prisma init",
+    "migrate": "npx prisma migrate dev",
+    "generate": "npx prisma generate"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "passport": "^0.7.0",
+    "passport-google-oidc": "^0.1.0",
+    "passport-jwt": "^4.0.1",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "prisma": "^5.20.0"
+  }
+}
