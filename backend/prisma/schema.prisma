@@ -7,3 +7,53 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model BlogUser {
+  id            Int             @id @default(autoincrement())
+  username      String          @unique
+  password      String?
+  isAdmin       Boolean         @default(false)
+  BlogOauthUser BlogOauthUser[]
+  BlogPost      BlogPost[]
+  BlogComment   BlogComment[]
+}
+
+model BlogOauthUser {
+  id       Int      @id @default(autoincrement())
+  provider String
+  subject  String
+  User     BlogUser @relation(fields: [userId], references: [id])
+  userId   Int
+
+  @@unique([provider, subject])
+}
+
+model BlogPost {
+  id          Int           @id @default(autoincrement())
+  title       String
+  content     String
+  published   Boolean       @default(false)
+  author      BlogUser      @relation(fields: [authorId], references: [id])
+  authorId    Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  BlogPostTag BlogPostTag[]
+  BlogComment BlogComment[]
+}
+
+model BlogPostTag {
+  id     Int      @id @default(autoincrement())
+  tag    String  @unique
+  post   BlogPost @relation(fields: [postId], references: [id])
+  postId Int
+}
+
+model BlogComment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  author    BlogUser @relation(fields: [authorId], references: [id])
+  authorId  Int
+  post      BlogPost @relation(fields: [postId], references: [id])
+  postId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
