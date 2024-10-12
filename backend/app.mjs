@@ -7,6 +7,7 @@ import swaggerRouter from "./routes/swaggerRouter.mjs";
 import swaggerJsdoc from "swagger-jsdoc";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import userRouter from "./routes/userRouter.mjs";
 import postsRouter from "./routes/postsRouter.mjs";
 import adminRouter from "./routes/adminRouter.mjs";
@@ -33,8 +34,10 @@ switch (process.env.NODE_ENV) {
     process.env.DB_URL = process.env.DB_URL_TEST;
 }
 
-// Swagger jsdoc configuration
+// Auto update the Swagger JSON file in development
 if (process.env.NODE_ENV === "development") {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   const options = {
     definition: {
       openapi: "3.0.0",
@@ -46,11 +49,16 @@ if (process.env.NODE_ENV === "development") {
     apis: ["./routes/*.js"],
   };
   const swaggerSpec = swaggerJsdoc(options);
-  fs.writeFileSync(
-    path.resolve(__dirname, "./swagger.json"),
-    JSON.stringify(swaggerSpec, null, 2),
-    "utf8"
-  );
+  const swaggerFilePath = path.resolve(__dirname, "./swagger.json");
+  // We have to compare the version for avoiding infinite loop
+  // since "node --wathc" does not support file exclusion.
+  const prev = fs.existsSync(swaggerFilePath)
+    ? fs.readFileSync(swaggerFilePath, "utf8")
+    : null;
+  const curr = JSON.stringify(swaggerSpec, null, 2);
+  if (prev !== curr) {
+    fs.writeFileSync(swaggerFilePath, curr, "utf8");
+  }
 }
 
 // Create the express app

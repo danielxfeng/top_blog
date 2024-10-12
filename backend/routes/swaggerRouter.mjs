@@ -1,8 +1,9 @@
 import express from "express";
 import swaggerUi from "swagger-ui-express";
-import swaggerDocument from "./swagger.json";
+import swaggerDocument from "../swagger.json" assert { type: "json" };
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 const swaggerRouter = express.Router();
 
@@ -13,9 +14,12 @@ const prodController = (req, res, next) => {
 
 // Define controller for development environment.
 const devController = (req, res, next) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
   const dynamicSwaggerDocument = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "./swagger.json"), "utf8")
+    fs.readFileSync(path.resolve(__dirname, "../swagger.json"), "utf8")
   );
+
   swaggerUi.setup(dynamicSwaggerDocument)(req, res, next);
 };
 
