@@ -4,6 +4,9 @@ import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import createError from "http-errors";
 import swaggerRouter from "./routes/swaggerRouter.mjs";
+import swaggerJsdoc from "swagger-jsdoc";
+import fs from "fs";
+import path from "path";
 import userRouter from "./routes/userRouter.mjs";
 import postsRouter from "./routes/postsRouter.mjs";
 import adminRouter from "./routes/adminRouter.mjs";
@@ -28,6 +31,26 @@ switch (process.env.NODE_ENV) {
     break;
   default:
     process.env.DB_URL = process.env.DB_URL_TEST;
+}
+
+// Swagger jsdoc configuration
+if (process.env.NODE_ENV === "development") {
+  const options = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "Fancy Blog API",
+        version: "1.0.0",
+      },
+    },
+    apis: ["./routes/*.js"],
+  };
+  const swaggerSpec = swaggerJsdoc(options);
+  fs.writeFileSync(
+    path.resolve(__dirname, "./swagger.json"),
+    JSON.stringify(swaggerSpec, null, 2),
+    "utf8"
+  );
 }
 
 // Create the express app
