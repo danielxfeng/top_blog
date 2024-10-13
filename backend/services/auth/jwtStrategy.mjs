@@ -12,11 +12,12 @@ const jwtOptions = {
 const jwtVerify = async (payload, done) => {
   try {
     const username = payload.userName; // extract the username from the payload
+    const isAdmin = payload.isAdmin; // extract the isAdmin from the payload
     const user = await prisma.blogUser.findFirst({
-      where: { username, isDeleted: false },
+      where: { username, isAdmin, isDeleted: false},
       select: { username: true, isAdmin: true },
     });
-    if (user && user.isAdmin === payload.isAdmin) return done(null, user); // user exists
+    if (user) return done(null, user); // user exists
     return done(null, false); // user not found
   } catch (error) {
     done(error, false); // error
