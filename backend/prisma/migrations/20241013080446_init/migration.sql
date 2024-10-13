@@ -4,6 +4,10 @@ CREATE TABLE "BlogUser" (
     "username" TEXT NOT NULL,
     "password" TEXT,
     "isAdmin" BOOLEAN NOT NULL DEFAULT false,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "deletedAt" TIMESTAMP(3),
+    "encryptedName" TEXT,
 
     CONSTRAINT "BlogUser_pkey" PRIMARY KEY ("id")
 );
@@ -27,6 +31,7 @@ CREATE TABLE "BlogPost" (
     "authorId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "BlogPost_pkey" PRIMARY KEY ("id")
 );
@@ -48,6 +53,7 @@ CREATE TABLE "BlogComment" (
     "postId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isDeleted" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "BlogComment_pkey" PRIMARY KEY ("id")
 );

@@ -81,7 +81,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", swaggerRouter);
 
 // The user related routes, like:
-// - register/login/logout.
+// - register/login/logout/manage/delete.
 // - Google OAuth.
 app.use("/api/user", userRouter);
 
