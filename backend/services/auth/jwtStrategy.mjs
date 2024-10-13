@@ -16,7 +16,7 @@ const jwtVerify = async (payload, done) => {
       where: { username, isDeleted: false },
       select: { username: true, isAdmin: true },
     });
-    if (user) return done(null, user); // user exists
+    if (user && user.isAdmin === payload.isAdmin) return done(null, user); // user exists
     return done(null, false); // user not found
   } catch (error) {
     done(error, false); // error
