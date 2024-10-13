@@ -1,7 +1,8 @@
 import express from "express";
 import passport from "passport";
 import { auth } from "../services/auth/jwtStrategy.mjs";
-import { googleAuth } from "../services/auth/googleStategy.mjs";
+import { googleAuth } from "../services/auth/googleStrategy.mjs";
+import { githubAuth } from "../services/auth/githubStrategy.mjs";
 import {
   userInfoController,
   userSignupController,
@@ -10,6 +11,7 @@ import {
   userLoginController,
   userLogoutController,
   userGoogleCallbackController,
+  userGithubCallbackController,
 } from "../controllers/userController.mjs";
 
 const userRouter = express.Router();
@@ -124,7 +126,7 @@ userRouter.get("/oauth/google", passport.authenticate("google"));
 
 /**
  * @swagger
- * /api/user/google/bind/callback:
+ * /api/user/google/callback:
  *   get:
  *     summary: Handle Google OAuth callback for creating or binding.
  *     description: Handle Google OAuth callback to create a new user or bind to an existing user.
@@ -159,6 +161,59 @@ userRouter.get(
   "/oauth/google/callback",
   googleAuth,
   userGoogleCallbackController
+);
+
+/**
+ * @swagger
+ * /api/user/github:
+ *   get:
+ *     summary: Oauth login with Github.
+ *     description: Redirect to Github for OAuth login.
+ *     responses:
+ *       302:
+ *         description: Redirecting to Github for authentication
+ *       500:
+ *         description: Server error
+ */
+userRouter.get("/oauth/github", passport.authenticate("github"));
+
+/**
+ * @swagger
+ * /api/user/github/callback:
+ *   get:
+ *     summary: Handle Github OAuth callback for creating or binding.
+ *     description: Handle Github OAuth callback to create a new user or bind to an existing user.
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         schema:
+ *           type: string
+ *         description: Optional JWT token, leave empty for creating a new user.
+ *     responses:
+ *       200:
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                   description: The registered username
+ *                 token:
+ *                   type: string
+ *                   description: JWT token
+ *       401:
+ *         description: Unauthorized - invalid JWT token
+ *       409:
+ *         description: The account already bound to another user
+ *       500:
+ *         description: Server error
+ */
+userRouter.get(
+  "/oauth/github/callback",
+  githubAuth,
+  userGithubCallbackController
 );
 
 //

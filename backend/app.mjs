@@ -13,7 +13,8 @@ import userRouter from "./routes/userRouter.mjs";
 import postsRouter from "./routes/postsRouter.mjs";
 import adminRouter from "./routes/adminRouter.mjs";
 import { jwtStrategy, getAuthenticatedUser } from "./services/auth/jwtStrategy.mjs";
-import { googleStrategy } from "./services/auth/googleStategy.mjs";
+import { googleStrategy } from "./services/auth/googleStrategy.mjs";
+import { githubStrategy } from "./services/auth/githubStrategy.mjs";
 
 // Set the environment variables
 envdot.config();
@@ -81,6 +82,7 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication configuration
 passport.use(jwtStrategy);
 passport.use(googleStrategy);
+passport.use(githubStrategy);
 app.use(getAuthenticatedUser);
 
 // Define the routes

@@ -1,19 +1,34 @@
-import GoogleStrategy from "passport-google-oidc";
 import { prisma } from "../../app.mjs";
 
-const googleOptions = {
-  clientID: process.env["GOOGLE_CLIENT_ID"],
-  clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
-  callbackURL: "/oauth/google/callback",
-  scope: ["profile"],
+/**
+ * Generate the options for the OAuth strategy.
+ * 
+ * @param {string} provider The provider name, "github" or "google".
+ * @param {string} scope The scope for the OAuth.
+ * @returns The object containing the options for the OAuth strategy.
+ */
+const generateOptions = (provider, scope) => {
+  return {
+    clientID: process.env[`${provider.toUpperCase()}_CLIENT_ID`],
+    clientSecret: process.env[`${provider.toUpperCase()}_CLIENT_SECRET`],
+    callbackURL: `/oauth/${provider}/callback`,
+    scope,
+    session: false,
+  };
 };
 
-const googleVerify = async (req, profile, done) => {
+/**
+ * Generate the verify function for the OAuth strategy.
+ * 
+ * @param {string} provider The provider name, "github" or "google".
+ * @returns The verify function.
+ */
+const generateVerifyFunc = (provider) => async (req, profile, done) => {
   // Find the user in the oauthUser table.
   try {
     let user = await prisma.blogOauthUser.findUnique({
       where: {
-        [provider_subject]: { provider: "google", subject: profile.id },
+        provider_subject: { provider, subject: profile.id },
       },
       include: { BlogUser: true },
       select: {
@@ -38,7 +53,7 @@ const googleVerify = async (req, profile, done) => {
     if (req.user) {
       await prisma.blogOauthUser.create({
         data: {
-          provider: "google",
+          provider,
           subject: profile.id,
           BlogUser: { connect: { name: req.user.name } },
         },
@@ -49,8 +64,8 @@ const googleVerify = async (req, profile, done) => {
     // If there is no logged in user, we create a new user.
     const newUser = await prisma.blogUser.create({
       data: {
-        name: profile.displayName,
-        blogOauthUser: { create: { provider: "google", subject: profile.id } },
+        name: profile.displayName || profile.username,
+        blogOauthUser: { create: { provider: provider, subject: profile.id } },
       },
       select: { name: true, isAdmin: true },
     });
@@ -61,23 +76,21 @@ const googleVerify = async (req, profile, done) => {
 };
 
 /**
- * The GoogleStrategy deals with the Google OAuth2.0 authentication.
- * Apply it in app.js.
- */
-const googleStrategy = new GoogleStrategy(googleOptions, googleVerify);
-
-/**
- * The googleAuth middleware authenticates the user with Google OAuth2.0.
+ * The oauthAuth middleware authenticates the user with Github/Google OAuth2.0.
  * If the user is authenticated, the user object is stored in req.user.
  * If the user is not authenticated, will return a 401 status code.
+ * 
+ * @param {string} provider The provider name, "github" or "google".
+ * @returns The middleware function.
  */
-const googleAuth = async (req, res, next) => {
-  passport.authenticate("google", async (err, user) => {
+const generateOauthAuthMidware = (provider) => async (req, res, next) => {
+  passport.authenticate(provider, async (err, user) => {
     if (err) return res.status(401).json({ message: err.message });
-    if (!user) return res.status(401).json({ message: "User authentication failed." });
+    if (!user)
+      return res.status(401).json({ message: "User authentication failed." });
     req.user = user;
     next();
   })(req, res, next);
 };
 
-export { googleStrategy, googleAuth };
+export { generateOptions, generateVerifyFunc, generateOauthAuthMidware };

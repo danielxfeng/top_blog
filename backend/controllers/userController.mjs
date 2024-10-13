@@ -7,6 +7,7 @@ const userDeleteController = asyncHandler(async (req, res) => {});
 const userLoginController = asyncHandler(async (req, res) => {});
 const userLogoutController = asyncHandler(async (req, res) => {});
 const userGoogleCallbackController = asyncHandler(async (req, res) => {});
+const userGithubCallbackController = asyncHandler(async (req, res) => {});
 
 export {
   userInfoController,
@@ -16,4 +17,5 @@ export {
   userLoginController,
   userLogoutController,
   userGoogleCallbackController,
+  userGithubCallbackController,
 };
