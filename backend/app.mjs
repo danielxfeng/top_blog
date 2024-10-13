@@ -7,10 +7,13 @@ import swaggerJsdoc from "swagger-jsdoc";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import passport from "passport";
 import swaggerRouter from "./routes/swaggerRouter.mjs";
 import userRouter from "./routes/userRouter.mjs";
 import postsRouter from "./routes/postsRouter.mjs";
 import adminRouter from "./routes/adminRouter.mjs";
+import { jwtStrategy, getAuthenticatedUser } from "./services/auth/jwtStrategy.mjs";
+import { googleStrategy } from "./services/auth/googleStategy.mjs";
 
 // Set the environment variables
 envdot.config();
@@ -46,7 +49,7 @@ if (process.env.NODE_ENV === "development") {
         version: "1.0.0",
       },
     },
-    apis: ["./routes/*.js"],
+    apis: ["./routes/*.mjs"],
   };
   const swaggerSpec = swaggerJsdoc(options);
   const swaggerFilePath = path.resolve(__dirname, "./swagger.json");
@@ -74,6 +77,11 @@ app.use(cors(corsOptions));
 // Parse incoming requests
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Authentication configuration
+passport.use(jwtStrategy);
+passport.use(googleStrategy);
+app.use(getAuthenticatedUser);
 
 // Define the routes
 
