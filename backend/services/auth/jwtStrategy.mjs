@@ -12,8 +12,8 @@ const jwtOptions = {
 const jwtVerify = async (payload, done) => {
   try {
     const username = payload.userName; // extract the username from the payload
-    const user = await prisma.blogUser.findUnique({
-      where: { username },
+    const user = await prisma.blogUser.findFirst({
+      where: { username, isDeleted: false },
       select: { username: true, isAdmin: true },
     });
     if (user) return done(null, user); // user exists

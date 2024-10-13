@@ -26,9 +26,10 @@ const generateOptions = (provider, scope) => {
 const generateVerifyFunc = (provider) => async (req, profile, done) => {
   // Find the user in the oauthUser table.
   try {
-    let user = await prisma.blogOauthUser.findUnique({
+    let user = await prisma.blogOauthUser.findFirst({
       where: {
         provider_subject: { provider, subject: profile.id },
+        BlogUser: { isDeleted: false },
       },
       include: { BlogUser: true },
       select: {
