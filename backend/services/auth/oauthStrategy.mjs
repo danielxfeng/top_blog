@@ -32,14 +32,14 @@ const generateVerifyFunc = (provider) => async (req, profile, done) => {
       },
       include: { BlogUser: true },
       select: {
-        BlogUser: { select: { name: true, isAdmin: true } },
+        BlogUser: { select: { username: true, isAdmin: true } },
       },
     });
 
     // If the user exists in the database:
     if (user) {
       // if the user is not logged in, or the loggin in user is the same.
-      if (!req.user || req.user.name === user.BlogUser.name)
+      if (!req.user || req.user.username === user.BlogUser.username)
         return done(null, user.BlogUser);
       return done(new Error("This account has bound to other user."), null);
     }
@@ -55,7 +55,7 @@ const generateVerifyFunc = (provider) => async (req, profile, done) => {
         data: {
           provider,
           subject: profile.id,
-          BlogUser: { connect: { name: req.user.name } },
+          BlogUser: { connect: { username: req.user.username } },
         },
       });
       return done(null, req.user);
@@ -64,10 +64,10 @@ const generateVerifyFunc = (provider) => async (req, profile, done) => {
     // If there is no logged in user, we create a new user.
     const newUser = await prisma.blogUser.create({
       data: {
-        name: profile.displayName || profile.username,
+        username: profile.displayName || profile.username,
         blogOauthUser: { create: { provider: provider, subject: profile.id } },
       },
-      select: { name: true, isAdmin: true },
+      select: { username: true, isAdmin: true },
     });
     return done(null, newUser);
   } catch (error) {
