@@ -9,9 +9,7 @@ import {
   userUpdateController,
   userDeleteController,
   userLoginController,
-  userLogoutController,
-  userGoogleCallbackController,
-  userGithubCallbackController,
+  userOauthCallbackController,
 } from "../controllers/userController.mjs";
 
 const userRouter = express.Router();
@@ -160,7 +158,7 @@ userRouter.get("/oauth/google", passport.authenticate("google"));
 userRouter.get(
   "/oauth/google/callback",
   googleAuth,
-  userGoogleCallbackController
+  userOauthCallbackController
 );
 
 /**
@@ -200,6 +198,9 @@ userRouter.get("/oauth/github", passport.authenticate("github"));
  *                 username:
  *                   type: string
  *                   description: The registered username
+ *                 isAdmin:
+ *                   type: boolean
+ *                   description: Is the user an admin
  *                 token:
  *                   type: string
  *                   description: JWT token
@@ -213,7 +214,7 @@ userRouter.get("/oauth/github", passport.authenticate("github"));
 userRouter.get(
   "/oauth/github/callback",
   githubAuth,
-  userGithubCallbackController
+  userOauthCallbackController
 );
 
 //
@@ -297,8 +298,8 @@ userRouter.get("/", userInfoController);
  *                 type: string
  *               confirmPassword:
  *                 type: string
- *               unLinkGoogle:
- *                 type: boolean
+ *               adminCode:
+ *                 type: string
  *     responses:
  *       200:
  *         description: OK
@@ -344,36 +345,5 @@ userRouter.put("/", userUpdateController);
  *         description: Server error
  */
 userRouter.delete("/", userDeleteController);
-
-/**
- * @swagger
- * /api/user/logout:
- *   get:
- *     summary: User logout
- *     description: User logout
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         required: true
- *         schema:
- *           type: string
- *         description: JWT token
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: OK
- *       401:
- *         description: Unauthorized - missing or invalid token
- *       500:
- *         description: Server error
- */
-userRouter.get("/logout", userLogoutController);
 
 export default userRouter;
