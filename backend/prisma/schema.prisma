@@ -15,7 +15,6 @@ model BlogUser {
   isDeleted     Boolean         @default(false)
   createdAt     DateTime        @default(now())
   deletedAt     DateTime?
-  encryptedName String?
   BlogOauthUser BlogOauthUser[]
   BlogPost      BlogPost[]
   BlogComment   BlogComment[]

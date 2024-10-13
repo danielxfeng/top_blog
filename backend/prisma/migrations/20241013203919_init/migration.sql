@@ -7,7 +7,6 @@ CREATE TABLE "BlogUser" (
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
-    "encryptedName" TEXT,
 
     CONSTRAINT "BlogUser_pkey" PRIMARY KEY ("id")
 );

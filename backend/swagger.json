@@ -159,8 +159,8 @@
                   "confirmPassword": {
                     "type": "string"
                   },
-                  "unLinkGoogle": {
-                    "type": "boolean"
+                  "adminCode": {
+                    "type": "string"
                   }
                 }
               }
@@ -386,6 +386,10 @@
                       "type": "string",
                       "description": "The registered username"
                     },
+                    "isAdmin": {
+                      "type": "boolean",
+                      "description": "Is the user an admin"
+                    },
                     "token": {
                       "type": "string",
                       "description": "JWT token"
@@ -400,47 +404,6 @@
           },
           "409": {
             "description": "The account already bound to another user"
-          },
-          "500": {
-            "description": "Server error"
-          }
-        }
-      }
-    },
-    "/api/user/logout": {
-      "get": {
-        "summary": "User logout",
-        "description": "User logout",
-        "parameters": [
-          {
-            "in": "header",
-            "name": "Authorization",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "JWT token"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "OK"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized - missing or invalid token"
           },
           "500": {
             "description": "Server error"
