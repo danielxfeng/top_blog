@@ -11,7 +11,7 @@ const jwtOptions = {
 // Verify the JWT token
 const jwtVerify = async (payload, done) => {
   try {
-    const username = payload.userName; // extract the username from the payload
+    const username = payload.username; // extract the username from the payload
     const isAdmin = payload.isAdmin; // extract the isAdmin from the payload
     const user = await prisma.blogUser.findFirst({
       where: { username, isAdmin, isDeleted: false},

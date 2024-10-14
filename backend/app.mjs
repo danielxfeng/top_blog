@@ -12,7 +12,10 @@ import swaggerRouter from "./routes/swaggerRouter.mjs";
 import userRouter from "./routes/userRouter.mjs";
 import postsRouter from "./routes/postsRouter.mjs";
 import adminRouter from "./routes/adminRouter.mjs";
-import { jwtStrategy, getAuthenticatedUser } from "./services/auth/jwtStrategy.mjs";
+import {
+  jwtStrategy,
+  getAuthenticatedUser,
+} from "./services/auth/jwtStrategy.mjs";
 import { googleStrategy } from "./services/auth/googleStrategy.mjs";
 import { githubStrategy } from "./services/auth/githubStrategy.mjs";
 
@@ -65,12 +68,12 @@ if (process.env.NODE_ENV === "development") {
   }
 }
 
-// Create the express app
-const app = express();
+// Create the express app, export it for testing
+export const app = express();
 
 // Enable CORS
 var corsOptions = {
-  origin: process.env.CORS_ORIGIN,
+  origin: "*",
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
@@ -122,7 +125,7 @@ app.use((err, req, res, next) => {
   res.json({ error: msg });
 });
 
-// Prisma client
+// Prisma client, exported for other modules to use
 export const prisma = new PrismaClient();
 
 // Disconnect the Prisma client when the server ends
@@ -132,6 +135,8 @@ process.on("SIGINT", async () => {
 });
 
 // Start the server
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
-});
+if (process.env.NODE_ENV !== "test") {
+  app.listen(process.env.PORT, () => {
+    console.log(`Server is running on port ${process.env.PORT}`);
+  });
+}

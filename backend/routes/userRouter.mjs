@@ -277,7 +277,6 @@ userRouter.get("/", userInfoController);
  *     description: Update the user information.
  *                  - Username shoule be 6 to 64 characters, and unique.
  *                  - Password should be 6 to 64 characters, and secure.
- *                  - Confirm password should match the password.
  *     parameters:
  *       - in: header
  *         name: Authorization
@@ -295,8 +294,6 @@ userRouter.get("/", userInfoController);
  *               username:
  *                 type: string
  *               password:
- *                 type: string
- *               confirmPassword:
  *                 type: string
  *               adminCode:
  *                 type: string

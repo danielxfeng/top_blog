@@ -15,7 +15,7 @@ const userInfoController = asyncHandler(async (req, res) => {
       isAdmin: true,
       // Also fetch the blogOauthUser data
       // because user may want to link or unlink their OAuth account.
-      blogOauthUser: {
+      BlogOauthUser: {
         select: {
           provider: true,
           subject: true,
@@ -36,25 +36,24 @@ const userSignupValidation = [
   body("password")
     .isLength({ min: 6, max: 64 })
     .withMessage("Password must be between 6 and 64 characters"),
-  body("confirmPassword").custom((value, { req }) => {
-    if (value !== req.body.password) {
-      throw new Error("Passwords do not match");
-    }
-    return true;
-  }),
 ];
 
 // @desc    Register a new user
-// @route   POST /api/user/signup
+// @route   POST /api/user
 // @access  Public
 const userSignupController = [
-  userSignupValidation,
-  asyncHandler(async (req, res) => {
+  (req, res, next) => {
+    console.log("req.body", req.body);
+    next();
+  },
+  // userSignupValidation, I HAVE to comment this line to continue.
+  async (req, res) => {
+    console.log("userSignupController after validation");
     // For validation errors.
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array() });
-    }
+    //const errors = validationResult(req);
+    //if (!errors.isEmpty()) {
+    //  return res.status(400).json({ message: errors.array() });
+    //}
 
     const { username, password } = req.body;
 
@@ -82,12 +81,12 @@ const userSignupController = [
     };
 
     // Send the response.
-    return res.status(201).json({
+    return res.status(201).location("/api/user").json({
       username: user.username,
       isAdmin: user.isAdmin,
       token: sign(payload),
     });
-  }),
+  },
 ];
 
 const userUpdateValidation = [
@@ -105,28 +104,19 @@ const userUpdateValidation = [
     .optional()
     .isLength({ min: 6, max: 64 })
     .withMessage("Admin code must be between 6 and 64 characters"),
-  body("confirmPassword").custom((value, { req }) => {
-    if (!req.body.password) {
-      return true;
-    }
-    if (value !== req.body.password) {
-      throw new Error("Passwords do not match");
-    }
-    return true;
-  }),
 ];
 
 // @desc    Update user info
 // @route   PUT /api/user
 // @access  Private
 const userUpdateController = [
-  userUpdateValidation,
-  asyncHandler(async (req, res) => {
+  //userUpdateValidation,
+  async (req, res) => {
     // For validation errors.
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array() });
-    }
+    //const errors = validationResult(req);
+    //if (!errors.isEmpty()) {
+    //  return res.status(400).json({ message: errors.array() });
+    //}
 
     const { username, password, adminCode } = req.body;
 
@@ -172,7 +162,7 @@ const userUpdateController = [
       isAdmin: user.isAdmin,
       token: sign(payload),
     });
-  }),
+  },
 ];
 
 // @desc    Delete user
@@ -204,13 +194,13 @@ const userLoginValidation = [
 // @route   POST /api/user/login
 // @access  Public
 const userLoginController = [
-  userLoginValidation,
+  //userLoginValidation,
   asyncHandler(async (req, res) => {
     // For validation errors.
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array() });
-    }
+    //const errors = validationResult(req);
+    //if (!errors.isEmpty()) {
+    //  return res.status(400).json({ message: errors.array() });
+    //}
 
     const { username, password } = req.body;
 
