@@ -3,6 +3,7 @@ import { body, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import { prisma } from "../app.mjs";
 import sign from "../services/auth/jwtSign.mjs";
+import validate from "../services/validate.mjs";
 
 // @desc    Get user info
 // @route   GET /api/user
@@ -31,7 +32,7 @@ const userSignupValidation = [
   body("username")
     .isLength({ min: 6, max: 64 })
     .withMessage("Username must be between 6 and 64 characters")
-    .isAlphanumeric({ ignore: "_-" })
+    .isAlphanumeric()
     .withMessage("Username must be alphanumeric characters, and '_' or '-'"),
   body("password")
     .isLength({ min: 6, max: 64 })
@@ -42,19 +43,9 @@ const userSignupValidation = [
 // @route   POST /api/user
 // @access  Public
 const userSignupController = [
-  (req, res, next) => {
-    console.log("req.body", req.body);
-    next();
-  },
-  // userSignupValidation, I HAVE to comment this line to continue.
-  async (req, res) => {
-    console.log("userSignupController after validation");
-    // For validation errors.
-    //const errors = validationResult(req);
-    //if (!errors.isEmpty()) {
-    //  return res.status(400).json({ message: errors.array() });
-    //}
-
+  userSignupValidation,
+  validate,
+  asyncHandler(async (req, res) => {
     const { username, password } = req.body;
 
     // Check duplicated signup.
@@ -81,12 +72,15 @@ const userSignupController = [
     };
 
     // Send the response.
-    return res.status(201).location("/api/user").json({
-      username: user.username,
-      isAdmin: user.isAdmin,
-      token: sign(payload),
-    });
-  },
+    return res
+      .status(201)
+      .location("/api/user")
+      .json({
+        username: user.username,
+        isAdmin: user.isAdmin,
+        token: sign(payload),
+      });
+  }),
 ];
 
 const userUpdateValidation = [
@@ -94,7 +88,7 @@ const userUpdateValidation = [
     .optional()
     .isLength({ min: 6, max: 64 })
     .withMessage("Username must be between 6 and 64 characters")
-    .isAlphanumeric({ ignore: "_-" })
+    .isAlphanumeric()
     .withMessage("Username must be alphanumeric characters, and '_' or '-'"),
   body("password")
     .optional()
@@ -110,14 +104,9 @@ const userUpdateValidation = [
 // @route   PUT /api/user
 // @access  Private
 const userUpdateController = [
-  //userUpdateValidation,
-  async (req, res) => {
-    // For validation errors.
-    //const errors = validationResult(req);
-    //if (!errors.isEmpty()) {
-    //  return res.status(400).json({ message: errors.array() });
-    //}
-
+  userUpdateValidation,
+  validate,
+  asyncHandler(async (req, res) => {
     const { username, password, adminCode } = req.body;
 
     // Check if there are no fields to update.
@@ -162,7 +151,7 @@ const userUpdateController = [
       isAdmin: user.isAdmin,
       token: sign(payload),
     });
-  },
+  }),
 ];
 
 // @desc    Delete user
@@ -183,7 +172,7 @@ const userLoginValidation = [
   body("username")
     .isLength({ min: 6, max: 64 })
     .withMessage("Username must be between 6 and 64 characters")
-    .isAlphanumeric({ ignore: "_-" })
+    .isAlphanumeric()
     .withMessage("Username must be alphanumeric characters, and '_' or '-'"),
   body("password")
     .isLength({ min: 6, max: 64 })
@@ -194,7 +183,8 @@ const userLoginValidation = [
 // @route   POST /api/user/login
 // @access  Public
 const userLoginController = [
-  //userLoginValidation,
+  userLoginValidation,
+  validate,
   asyncHandler(async (req, res) => {
     // For validation errors.
     //const errors = validationResult(req);

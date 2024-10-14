@@ -119,6 +119,8 @@ app.use((req, res, next) => {
 // Set the status code and send the error message as JSON.
 // Only show the error message in development.
 app.use((err, req, res, next) => {
+  if (process.env.NODE_ENV !== "production")
+    console.error(err);
   let msg = err.message;
   msg = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
