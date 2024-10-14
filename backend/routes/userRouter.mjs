@@ -22,6 +22,7 @@ const userRouter = express.Router();
  *     description: Register a new user.
  *                  - Username shoule be 6 to 64 characters, and unique.
  *                  - Password should be 6 to 64 characters, and secure.
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -71,6 +72,7 @@ userRouter.post("/", userSignupController);
  *     description: User login
  *                  - Username should be 6 to 64 characters, and unique.
  *                  - Password should be 6 to 64 characters, and secure.
+ *     tags: [Users]
  *     requestBody:
  *       required: true
  *       content:
@@ -114,6 +116,7 @@ userRouter.post("/login", userLoginController);
  *   get:
  *     summary: Oauth login with Google.
  *     description: Redirect to Google for OAuth login.
+ *     tags: [Users]
  *     responses:
  *       302:
  *         description: Redirecting to Google for authentication
@@ -128,6 +131,7 @@ userRouter.get("/oauth/google", passport.authenticate("google"));
  *   get:
  *     summary: Handle Google OAuth callback for creating or binding.
  *     description: Handle Google OAuth callback to create a new user or bind to an existing user.
+ *     tags: [Users]
  *     parameters:
  *       - in: header
  *         name: Authorization
@@ -167,6 +171,7 @@ userRouter.get(
  *   get:
  *     summary: Oauth login with Github.
  *     description: Redirect to Github for OAuth login.
+ *     tags: [Users]
  *     responses:
  *       302:
  *         description: Redirecting to Github for authentication
@@ -181,6 +186,7 @@ userRouter.get("/oauth/github", passport.authenticate("github"));
  *   get:
  *     summary: Handle Github OAuth callback for creating or binding.
  *     description: Handle Github OAuth callback to create a new user or bind to an existing user.
+ *     tags: [Users]
  *     parameters:
  *       - in: header
  *         name: Authorization
@@ -229,6 +235,7 @@ userRouter.use(auth());
  *   get:
  *     summary: Get the user information
  *     description: Get the user information.
+ *     tags: [Users]
  *     parameters:
  *       - in: header
  *         name: Authorization
@@ -277,6 +284,7 @@ userRouter.get("/", userInfoController);
  *     description: Update the user information.
  *                  - Username shoule be 6 to 64 characters, and unique.
  *                  - Password should be 6 to 64 characters, and secure.
+ *     tags: [Users]
  *     parameters:
  *       - in: header
  *         name: Authorization
@@ -326,6 +334,7 @@ userRouter.put("/", userUpdateController);
  *   delete:
  *     summary: Delete the user
  *     description: Delete the user.
+ *     tags: [Users]
  *     parameters:
  *       - in: header
  *         name: Authorization
