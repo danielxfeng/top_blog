@@ -110,7 +110,7 @@ const userUpdateController = [
     const { username, password, adminCode } = req.body;
 
     // Check if there are no fields to update.
-    if (!username && !password && !isAdmin) {
+    if (!username && !password && !adminCode) {
       return res.status(400).json({ message: "No fields to update" });
     }
 
@@ -120,7 +120,7 @@ const userUpdateController = [
       : undefined;
 
     // Check if it's legal to add the admin flag.
-    const isAdmin = adminCode === process.env.ADMIN_CODE ? true : undefined;
+    const isAdmin = adminCode && adminCode === process.env.ADMIN_CODE ? true : undefined;
 
     // Compose the updated value.
     const updatedValue = {
