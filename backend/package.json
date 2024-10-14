@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.mjs",
   "scripts": {
-    "test": "NODE_ENV=test && jest",
+    "test": "NODE_ENV=test && mocha",
     "dev": "NODE_ENV=development && node --watch app.mjs",
     "start": "NODE_ENV=production && node app.mjs",
     "prisma": "npx prisma init",
@@ -34,7 +34,8 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
+    "chai": "^5.1.1",
+    "mocha": "^10.7.3",
     "prisma": "^5.20.0",
     "supertest": "^7.0.0"
   }
