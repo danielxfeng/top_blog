@@ -4,9 +4,9 @@
   "description": "",
   "main": "app.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node --watch app.mjs",
-    "start": "node app.mjs",
+    "test": "NODE_ENV=test && jest",
+    "dev": "NODE_ENV=development && node --watch app.mjs",
+    "start": "NODE_ENV=production && node app.mjs",
     "prisma": "npx prisma init",
     "migrate": "npx prisma migrate dev",
     "generate": "npx prisma generate"
@@ -34,6 +34,8 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
-    "prisma": "^5.20.0"
+    "jest": "^29.7.0",
+    "prisma": "^5.20.0",
+    "supertest": "^7.0.0"
   }
 }
