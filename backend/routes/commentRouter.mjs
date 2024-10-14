@@ -1,6 +1,7 @@
 import express from "express";
 import { auth } from "../services/auth/jwtStrategy.mjs";
 import {
+  getCommentsController,
   createCommentController,
   updateCommentController,
   deleteCommentController,
@@ -10,7 +11,67 @@ const commentRouter = express.Router();
 
 /**
  * @swagger
- * /api/comment/:
+ * /api/comment:
+ *   get:
+ *     summary: Get all comments by post ID
+ *     description: Retrieve a list of all comments with pagination support.
+ *     tags: [Comments]
+ *     parameters:
+ *       - in: query
+ *         name: postId
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 1
+ *           description: The ID of the post to which the comments belong
+ *       - in: query
+ *         name: startTimestamp
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *         description: Return comments updated before the startTimestamp.
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *         description: The number of comments to return per page.
+ *     responses:
+ *       200:
+ *         description: A list of comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 posts:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         description: The ID of the comment
+ *                       content:
+ *                         type: string
+ *                         description: The content of the post
+ *                       updatedAt:
+ *                         type: string
+ *                         description: The date and time of the last update
+ *                       BlogUser.username:
+ *                         type: string
+ *                         description: The username of the author
+ *                 total:
+ *                   type: integer
+ *                   description: The total number of posts
+ *       500:
+ *         description: Server error
+ */
+commentRouter.get("/comment", getCommentsController);
+
+/**
+ * @swagger
+ * /api/comment:
  *   post:
  *     summary: Create a new comment
  *     description: Create a new comment.
