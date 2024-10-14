@@ -5,10 +5,227 @@
     "version": "1.0.0"
   },
   "paths": {
+    "/api/comment/": {
+      "post": {
+        "summary": "Create a new comment",
+        "description": "Create a new comment. For authenticated user only.",
+        "tags": [
+          "Comments"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "The JWT token"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "postId": {
+                    "type": "string",
+                    "description": "The ID of the post to which the comment belongs"
+                  },
+                  "content": {
+                    "type": "string",
+                    "description": "The content of the comment"
+                  }
+                },
+                "required": [
+                  "postId",
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the created comment"
+                    },
+                    "postId": {
+                      "type": "string",
+                      "description": "The ID of the post"
+                    },
+                    "content": {
+                      "type": "string",
+                      "description": "The content of the comment"
+                    },
+                    "updatededAt": {
+                      "type": "string",
+                      "description": "The date and time of the last update"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized - invalid JWT token"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/comment/{id}": {
+      "put": {
+        "summary": "Update a comment",
+        "description": "Update an existing comment. Only the author can update their own comment. Requires a valid JWT token.",
+        "tags": [
+          "Comments"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The JWT token"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the comment"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "The new content of the comment"
+                  }
+                },
+                "required": [
+                  "content"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The ID of the updated comment"
+                    },
+                    "postId": {
+                      "type": "string",
+                      "description": "The ID of the post"
+                    },
+                    "content": {
+                      "type": "string",
+                      "description": "The content of the comment"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "The date and time of the last update"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized - invalid JWT token"
+          },
+          "404": {
+            "description": "Comment not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a comment",
+        "description": "Delete an existing comment. The author can delete their own comment. Admin can delete all comments. Requires a valid JWT token.",
+        "tags": [
+          "Comments"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Authorization",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The JWT token"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "description": "The ID of the comment to delete",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized - invalid JWT token"
+          },
+          "404": {
+            "description": "Comment not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
     "/api/user": {
       "post": {
         "summary": "Register a new user",
         "description": "Register a new user. - Username shoule be 6 to 64 characters, and unique. - Password should be 6 to 64 characters, and secure.",
+        "tags": [
+          "Users"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -72,6 +289,9 @@
       "get": {
         "summary": "Get the user information",
         "description": "Get the user information.",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "header",
@@ -131,7 +351,10 @@
       },
       "put": {
         "summary": "Update the user information",
-        "description": "Update the user information. - Username shoule be 6 to 64 characters, and unique. - Password should be 6 to 64 characters, and secure. - Confirm password should match the password.",
+        "description": "Update the user information. - Username shoule be 6 to 64 characters, and unique. - Password should be 6 to 64 characters, and secure.",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "header",
@@ -154,9 +377,6 @@
                     "type": "string"
                   },
                   "password": {
-                    "type": "string"
-                  },
-                  "confirmPassword": {
                     "type": "string"
                   },
                   "adminCode": {
@@ -202,6 +422,9 @@
       "delete": {
         "summary": "Delete the user",
         "description": "Delete the user.",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "header",
@@ -230,6 +453,9 @@
       "post": {
         "summary": "User login",
         "description": "User login - Username should be 6 to 64 characters, and unique. - Password should be 6 to 64 characters, and secure.",
+        "tags": [
+          "Users"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -289,6 +515,9 @@
       "get": {
         "summary": "Oauth login with Google.",
         "description": "Redirect to Google for OAuth login.",
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "302": {
             "description": "Redirecting to Google for authentication"
@@ -303,6 +532,9 @@
       "get": {
         "summary": "Handle Google OAuth callback for creating or binding.",
         "description": "Handle Google OAuth callback to create a new user or bind to an existing user.",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "header",
@@ -350,6 +582,9 @@
       "get": {
         "summary": "Oauth login with Github.",
         "description": "Redirect to Github for OAuth login.",
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "302": {
             "description": "Redirecting to Github for authentication"
@@ -364,6 +599,9 @@
       "get": {
         "summary": "Handle Github OAuth callback for creating or binding.",
         "description": "Handle Github OAuth callback to create a new user or bind to an existing user.",
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "header",
