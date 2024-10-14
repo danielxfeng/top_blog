@@ -1,3 +1,7 @@
+/**
+ * The test for the user management.
+ * Have not test the OAuth part.
+ */
 import request from "supertest";
 import { expect } from "chai";
 import { app, prisma } from "../app.mjs";
@@ -156,8 +160,7 @@ describe("Illegal input test when signup", () => {
     const response = await request(app).post("/api/user").send().expect(400);
 
     expect(response.body).to.deep.equal({
-      message: 
-      `Username must be between 6 and 64 characters Username must be alphanumeric characters, and '_' or '-' Password must be between 6 and 64 characters`,
+      message: `Username must be between 6 and 64 characters Username must be alphanumeric characters, and '_' or '-' Password must be between 6 and 64 characters`,
     });
   });
 
@@ -168,8 +171,7 @@ describe("Illegal input test when signup", () => {
       .expect(400);
 
     expect(response.body).to.deep.equal({
-      message:
-      `Username must be between 6 and 64 characters Password must be between 6 and 64 characters`,
+      message: `Username must be between 6 and 64 characters Password must be between 6 and 64 characters`,
     });
   });
 
@@ -197,7 +199,10 @@ describe("Illegal input test when signup", () => {
   });
 
   it("Send not json data when signup", async () => {
-    const response = await request(app).post("/api/user").send("test").expect(400);
+    const response = await request(app)
+      .post("/api/user")
+      .send("test")
+      .expect(400);
   });
 });
 
@@ -213,7 +218,10 @@ describe("Illegal input test when login", () => {
   let token;
 
   it("The empty input", async () => {
-    const response = await request(app).post("/api/user/login").send().expect(400);
+    const response = await request(app)
+      .post("/api/user/login")
+      .send()
+      .expect(400);
 
     expect(response.body).to.deep.equal({
       message: `Username must be between 6 and 64 characters Username must be alphanumeric characters, and '_' or '-' Password must be between 6 and 64 characters`,
