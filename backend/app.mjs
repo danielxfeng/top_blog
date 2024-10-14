@@ -10,8 +10,8 @@ import { fileURLToPath } from "url";
 import passport from "passport";
 import swaggerRouter from "./routes/swaggerRouter.mjs";
 import userRouter from "./routes/userRouter.mjs";
-import postsRouter from "./routes/postsRouter.mjs";
-import adminRouter from "./routes/adminRouter.mjs";
+import postRouter from "./routes/postRouter.mjs";
+import commentRouter from "./routes/commentRouter.mjs";
 import {
   jwtStrategy,
   getAuthenticatedUser,
@@ -101,14 +101,12 @@ app.use("/api/user", userRouter);
 // The posts related routes, like:
 // - list the posts, all posts or by tag, with pagination.
 // - display a post, with comments.
-// - create/edit/delete a comment.
-app.use("/api/posts", postsRouter);
+// - create/edit/delete a post. Only admin can do this.
+app.use("/api/post", postRouter);
 
-// The features related admin, like:
-//  - list the posts, all posts or by tag, with pagination.
-//  - create/edit/delete a post.
-//  - delete a comment.
-app.use("/api/admin", adminRouter);
+// The comments related routes, like:
+//  - create/edit/delete a comment. Only authenticated user can do this.
+app.use("/api/comment", commentRouter);
 
 // 404 Error handler
 app.use((req, res, next) => {
