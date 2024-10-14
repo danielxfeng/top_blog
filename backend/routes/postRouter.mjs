@@ -36,6 +36,18 @@ const postRouter = express.Router();
  *           type: string
  *           example: "tag1, tag2"
  *         description: Filter posts by tags.
+ *       - in: query
+ *         name: from
+ *         schema:
+ *           type: string
+ *           example: "2024-01-01"
+ *         description: Start date of required date range.
+ *       - in: query
+ *         name: to
+ *         schema:
+ *           type: string
+ *           example: "2024-12-31"
+ *         description: End date of required date range.
  *     responses:
  *       200:
  *         description: A list of posts
