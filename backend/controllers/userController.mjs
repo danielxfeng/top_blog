@@ -6,6 +6,7 @@ import validate from "../services/validate.mjs";
 import {
   userSignupValidation,
   userUpdateValidation,
+  userLoginValidation,
 } from "./userValidator.mjs";
 
 // @desc    Get user info
@@ -154,17 +155,6 @@ const userDeleteController = asyncHandler(async (req, res) => {
 
   return res.status(204).end();
 });
-
-const userLoginValidation = [
-  body("username")
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Username must be between 6 and 64 characters")
-    .isAlphanumeric("en-US", { ignore: "_-" })
-    .withMessage("Username must be alphanumeric characters, and '_' or '-'"),
-  body("password")
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Password must be between 6 and 64 characters"),
-];
 
 // @desc    Login user
 // @route   POST /api/user/login

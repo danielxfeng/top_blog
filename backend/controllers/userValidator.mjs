@@ -28,4 +28,8 @@ const userUpdateValidation = [
     .withMessage("Admin code must be between 6 and 64 characters"),
 ];
 
-export { userSignupValidation, userUpdateValidation };
+const userLoginValidation = [
+    ...userSignupValidation,
+  ];
+
+export { userSignupValidation, userUpdateValidation, userLoginValidation };
