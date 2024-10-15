@@ -19,11 +19,11 @@ const postRouter = express.Router();
  *     tags: [Posts]
  *     parameters:
  *       - in: query
- *         name: startTimestamp
+ *         name: cursor
  *         schema:
  *           type: integer
  *           example: 1
- *         description: Return posts updated before the startTimestamp.
+ *         description: The cursor for pagination.
  *       - in: query
  *         name: limit
  *         schema:
@@ -70,9 +70,17 @@ const postRouter = express.Router();
  *                       content:
  *                         type: string
  *                         description: The content of the post
+ *                       tags:
+ *                         type: array
+ *                         items:
+ *                           type: string
+ *                       description: The tags of the post
  *                       updatedAt:
  *                         type: string
  *                         description: The date and time of the last update
+ *                       authorId:
+ *                         type: string
+ *                         description: The username of the author
  *                       BlogUser.username:
  *                         type: string
  *                         description: The username of the author
@@ -115,9 +123,17 @@ postRouter.get("/", getPostsController);
  *                 content:
  *                   type: string
  *                   description: The content of the post
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     description: The tags of the post
  *                 updatedAt:
  *                   type: string
  *                   description: The last update date of the post
+ *                 authorId:
+ *                   type: string
+ *                   description: The username of the author
  *                 BlogUser.username:
  *                   type: string
  *                   description: The username of the author
@@ -218,6 +234,10 @@ postRouter.post("/", createPostController);
  *               content:
  *                 type: string
  *                 description: The content of the post
+ *               tags:
+ *                 type: string
+ *                 description: The tags of the post
+ *                 example: "tag1, tag2"
  *     responses:
  *       200:
  *         description: OK
@@ -235,9 +255,17 @@ postRouter.post("/", createPostController);
  *                 content:
  *                   type: string
  *                   description: The content of the post
+ *                 tags:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     description: The tags of the post
  *                 updatedAt:
  *                   type: string
  *                   description: The last update date of the post
+ *                 authorId:
+ *                   type: string
+ *                   description: The username of the author
  *                 BlogUser.username:
  *                   type: string
  *                   description: The username of the author
