@@ -62,7 +62,7 @@ const getPostsController = [
     // Deal with the possible cursor for pagination
     const cursor = req.query.cursor
       ? { cursor: { id: req.query.cursor } }
-      : undefined;
+      : {};
 
     // Parse the limit for pagination.
     // The maximum limit is the MAX_PAGE_SIZE
@@ -76,7 +76,7 @@ const getPostsController = [
     // Parse the tags.
     const tags = req.query.tags
       ? { tags: { hasSome: req.query.tags.split(", ") } }
-      : undefined;
+      : {};
 
     // Output the unpublished posts if the user is an admin.
     const published = req.user && req.user.isAdmin ? {} : { published: true };
@@ -88,16 +88,16 @@ const getPostsController = [
     const to = req.query.to ? new Date(req.query.to) : undefined;
     const dateRange =
       !from && !to
-        ? undefined
+        ? {}
         : { updatedAt: { gte: from || new Date(0), lte: to || new Date() } };
 
     // Fetch the posts.
     const posts = await prisma.blogPost.findMany({
       where: {
-        ...(tags || {}),
-        ...(dateRange || {}),
-        ...(published || {}),
-        ...(cursor || {}),
+        ...tags,
+        ...dateRange,
+        ...published,
+        ...cursor,
         isDeleted: false,
       },
       take: limit,
@@ -192,12 +192,12 @@ const updatePostController = [
   validate,
   asyncHandler(async (req, res) => {
     // Parse the title.
-    const title = req.body.title ? { title: req.body.title } : undefined;
+    const title = req.body.title ? { title: req.body.title } : {};
 
     // Parse the content.
     const content = req.body.content
       ? { content: req.body.content }
-      : undefined;
+      : {};
 
     // Parse the tags.
     // Upsert the tags if they do not exist.
@@ -212,20 +212,20 @@ const updatePostController = [
             })),
           },
         }
-      : undefined;
+      : {};
 
     // Parse the published status.
     const published = req.body.published
       ? { published: req.body.published }
-      : undefined;
+      : {};
 
     const post = await prisma.blogPost.update({
       where: { id: req.query.id },
       data: {
-        ...(title || {}),
-        ...(content || {}),
-        ...(tags || {}),
-        ...(published || {}),
+        ...title,
+        ...content,
+        ...tags,
+        ...published,
       },
       select: {
         ...selectModel,

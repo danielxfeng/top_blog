@@ -38,7 +38,7 @@ const getCommentsController = [
     // Parse the cursor for pagination.
     const cursor = req.query.cursor
       ? { cursor: { id: req.query.cursor } }
-      : undefined;
+      : {};
     // Parse the limit for pagination.
     // The maximum limit is the MAX_PAGE_SIZE
     // or 30 if the enviroment variable is not set.
@@ -51,7 +51,7 @@ const getCommentsController = [
     // Fetch the comments.
     const comments = await prisma.blogComment.findMany({
       take: limit,
-      ...(cursor ? cursor : {}),
+      ...cursor,
       where: {
         postId: req.query.postId,
         isDeleted: false,
@@ -123,11 +123,11 @@ const deleteCommentController = [
   deleteCommentValidation,
   asyncHandler(async (req, res) => {
     // Admin can delete any comment, the authors can only delete their own comment.
-    const authorId = req.user.isAdmin ? undefined : { authorId: req.user.id };
+    const authorId = req.user.isAdmin ? {} : { authorId: req.user.id };
     await prisma.blogComment.update({
       where: {
         id: req.query.commentId,
-        ...(authorId || {}),
+        ...authorId,
       },
       data: {
         isDeleted: true,

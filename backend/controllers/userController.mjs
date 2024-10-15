@@ -91,7 +91,7 @@ const userUpdateController = [
   userUpdateValidation,
   validate,
   asyncHandler(async (req, res) => {
-    const { username, password, adminCode } = req.body;
+    let { username, password, adminCode } = req.body;
 
     // Check if there are no fields to update.
     if (!username && !password && !adminCode) {
@@ -103,15 +103,21 @@ const userUpdateController = [
       ? await bcrypt.hash(password, 10)
       : undefined;
 
+    // Prepare the updated value.
+    username = username ? { username: username } : {};
+    password = encryptedPassword ? { password: encryptedPassword } : {};
+
     // Check if it's legal to add the admin flag.
     const isAdmin =
-      adminCode && adminCode === process.env.ADMIN_CODE ? true : undefined;
+      adminCode && adminCode === process.env.ADMIN_CODE
+        ? { isAdmin: true }
+        : {};
 
     // Compose the updated value.
     const updatedValue = {
-      ...(username && { username }),
-      ...(password && { password: encryptedPassword }),
-      ...(isAdmin && { isAdmin }),
+      ...username,
+      ...password,
+      ...isAdmin,
     };
 
     // Update the database.
