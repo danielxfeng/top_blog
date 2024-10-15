@@ -1,9 +1,12 @@
 import asyncHandler from "express-async-handler";
-import { body } from "express-validator";
 import bcrypt from "bcryptjs";
 import { prisma } from "../app.mjs";
 import sign from "../services/auth/jwtSign.mjs";
 import validate from "../services/validate.mjs";
+import {
+  userSignupValidation,
+  userUpdateValidation,
+} from "./userValidator.mjs";
 
 // @desc    Get user info
 // @route   GET /api/user
@@ -28,17 +31,6 @@ const userInfoController = asyncHandler(async (req, res) => {
 
   return res.json(user);
 });
-
-const userSignupValidation = [
-  body("username")
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Username must be between 6 and 64 characters")
-    .isAlphanumeric("en-US", { ignore: "_-" })
-    .withMessage("Username must be alphanumeric characters, and '_' or '-'"),
-  body("password")
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Password must be between 6 and 64 characters"),
-];
 
 // @desc    Register a new user
 // @route   POST /api/user
@@ -91,23 +83,6 @@ const userSignupController = [
   }),
 ];
 
-const userUpdateValidation = [
-  body("username")
-    .optional()
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Username must be between 6 and 64 characters")
-    .isAlphanumeric("en-US", { ignore: "_-" })
-    .withMessage("Username must be alphanumeric characters, and '_' or '-'"),
-  body("password")
-    .optional()
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Password must be between 6 and 64 characters"),
-  body("adminCode")
-    .optional()
-    .isLength({ min: 6, max: 64 })
-    .withMessage("Admin code must be between 6 and 64 characters"),
-];
-
 // @desc    Update user info
 // @route   PUT /api/user
 // @access  Private
@@ -128,7 +103,8 @@ const userUpdateController = [
       : undefined;
 
     // Check if it's legal to add the admin flag.
-    const isAdmin = adminCode && adminCode === process.env.ADMIN_CODE ? true : undefined;
+    const isAdmin =
+      adminCode && adminCode === process.env.ADMIN_CODE ? true : undefined;
 
     // Compose the updated value.
     const updatedValue = {
