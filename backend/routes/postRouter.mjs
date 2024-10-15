@@ -67,9 +67,12 @@ const postRouter = express.Router();
  *                       title:
  *                         type: string
  *                         description: The title of the post
- *                       content:
+ *                       abstract:
  *                         type: string
- *                         description: The content of the post
+ *                         description: The sliced content of the post
+ *                       published:
+ *                         type: boolean
+ *                         description: The published status of the post
  *                       tags:
  *                         type: array
  *                         items:
@@ -81,7 +84,7 @@ const postRouter = express.Router();
  *                       authorId:
  *                         type: string
  *                         description: The username of the author
- *                       BlogUser.username:
+ *                       authorName:
  *                         type: string
  *                         description: The username of the author
  *                 total:
@@ -123,6 +126,9 @@ postRouter.get("/", getPostsController);
  *                 content:
  *                   type: string
  *                   description: The content of the post
+ *                 published:
+ *                   type: boolean
+ *                   description: The published status of the post
  *                 tags:
  *                   type: array
  *                   items:
@@ -134,7 +140,7 @@ postRouter.get("/", getPostsController);
  *                 authorId:
  *                   type: string
  *                   description: The username of the author
- *                 BlogUser.username:
+ *                 authorName:
  *                   type: string
  *                   description: The username of the author
  *       404:
@@ -255,6 +261,9 @@ postRouter.post("/", createPostController);
  *                 content:
  *                   type: string
  *                   description: The content of the post
+ *                 published:
+ *                   type: boolean
+ *                   description: The published status of the post
  *                 tags:
  *                   type: array
  *                   items:
@@ -266,7 +275,7 @@ postRouter.post("/", createPostController);
  *                 authorId:
  *                   type: string
  *                   description: The username of the author
- *                 BlogUser.username:
+ *                 authorName:
  *                   type: string
  *                   description: The username of the author
  *       404:
