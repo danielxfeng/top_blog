@@ -25,11 +25,11 @@ const commentRouter = express.Router();
  *           example: 1
  *           description: The ID of the post to which the comments belong
  *       - in: query
- *         name: startTimestamp
+ *         name: cursor
  *         schema:
  *           type: integer
  *           example: 1
- *         description: Return comments updated before the startTimestamp.
+ *         description: Return the cursor of the pagination.
  *       - in: query
  *         name: limit
  *         schema:
@@ -58,12 +58,9 @@ const commentRouter = express.Router();
  *                       updatedAt:
  *                         type: string
  *                         description: The date and time of the last update
- *                       BlogUser.username:
- *                         type: string
- *                         description: The username of the author
- *                 total:
- *                   type: integer
- *                   description: The total number of posts
+ *                       authorId:
+ *                         type: integer
+ *                         description: The id of the author
  *       500:
  *         description: Server error
  */
@@ -118,8 +115,11 @@ commentRouter.get("/comment", getCommentsController);
  *                   type: string
  *                   description: The content of the comment
  *                 updatededAt:
- *                  type: string
- *                  description: The date and time of the last update
+ *                   type: string
+ *                   description: The date and time of the last update
+ *                 authorId:
+ *                   type: integer
+ *                   description: The id of the author
  *       401:
  *         description: Unauthorized - invalid JWT token
  *       400:
