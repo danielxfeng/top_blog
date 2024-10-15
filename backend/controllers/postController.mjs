@@ -167,7 +167,8 @@ const createPostController = [
         authorId: req.user.id,
         BlogPostTag: {
           // Create the tags if they do not exist
-          createOrConnect: tags.map((tag) => ({
+          // see https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries
+          connectOrCreate: tags.map((tag) => ({
             where: { tag },
             create: { tag },
           })),
@@ -199,17 +200,19 @@ const updatePostController = [
       : undefined;
 
     // Parse the tags.
+    // Upsert the tags if they do not exist.
+    // see https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#nested-writes
     const tags = req.body.tags
       ? {
           BlogPostTag: {
-            // Create the tags if they do not exist
-            createOrConnect: tags.map((tag) => ({
-              where: { tag },
+            upsert: req.body.tags.map((tag) => ({
               create: { tag },
+              update: { tag },
+              where: { tag },
             })),
           },
         }
-      : [];
+      : undefined;
 
     // Parse the published status.
     const published = req.body.published
