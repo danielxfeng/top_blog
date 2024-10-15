@@ -2,16 +2,47 @@ import asyncHandler from "express-async-handler";
 import { body, query } from "express-validator";
 import validate from "../services/validate.mjs";
 
+// The model of select clauses for the post entity.
+const selectModel = {
+  id: true,
+  title: true,
+  content: true,
+  BlogPostTag: {
+    select: { tag: true },
+  },
+  published: true,
+  updatedAt: true,
+  authorId: true,
+  BlogUser: { select: { username: true } },
+};
+
 // Generate a DAO from a post entity.
-const generateDao = (post) => {
+// @param post The post entity.
+// @param isAbstract Generate the abstract instead of the content if true.
+const generateDao = (post, isAbstract = false) => {
+  // Cut the string to a maximum length.
+  const cutString = (str, length) => {
+    return str.length > length ? str.slice(0, length - 3) + "..." : str;
+  };
+
+  const optional = isAbstract
+    ? {
+        abstract: cutString(
+          post.content,
+          process.env.MAX_ABSTRACT_LENGTH || 100
+        ),
+      }
+    : { content: post.content };
+
   return {
     id: post.id,
     title: post.title,
-    content: post.content,
+    ...optional,
+    published: post.published,
     tags: post.BlogPostTag.map((tag) => tag.tag),
     updatedAt: post.updatedAt,
     authorId: post.authorId,
-    username: post.BlogUser.username,
+    authorname: post.BlogUser.username,
   };
 };
 
@@ -61,6 +92,9 @@ const getPostsController = [
       ? { tags: { hasSome: req.query.tags.split(", ") } }
       : undefined;
 
+    // Output the unpublished posts if the user is an admin.
+    const published = req.user && req.user.isAdmin ? {} : { published: true };
+
     // Parse the date range.
     // If only one of the dates is provided, the other is set to the minimum or maximum date.
     // If neither date is provided, the range is not applied.
@@ -74,28 +108,21 @@ const getPostsController = [
     // Fetch the posts.
     const posts = await prisma.blogPost.findMany({
       where: {
-        ...(cursor || {}),
         ...(tags || {}),
         ...(dateRange || {}),
+        ...(published || {}),
+        ...(cursor || {}),
         isDeleted: false,
       },
       take: limit,
       orderBy: { updatedAt: "desc" },
       select: {
-        id: true,
-        title: true,
-        content: true,
-        BlogPostTag: {
-          select: { tag: true },
-        },
-        updatedAt: true,
-        authorId: true,
-        BlogUser: { select: { username: true } },
+        ...selectModel,
       },
     });
 
     // Prepare the response.
-    let dao = posts.map((post) => generateDao(post));
+    let dao = posts.map((post) => generateDao(post, true));
 
     // We only send the abstract for the posts.
     dao.forEach((post) => {
@@ -124,15 +151,7 @@ const getPostController = [
     const post = await prisma.blogPost.findUnique({
       where: { id: req.query.id },
       select: {
-        id: true,
-        title: true,
-        content: true,
-        BlogPostTag: {
-          select: { tag: true },
-        },
-        updatedAt: true,
-        authorId: true,
-        BlogUser: { select: { username: true } },
+        ...selectModel,
       },
     });
 
@@ -221,6 +240,10 @@ const updatePostValidation = [
     .trim()
     .isAlphanumeric("us_EN", { ignore: ", " })
     .withMessage("Tags must be alphanumeric"),
+  body("published")
+    .optional()
+    .isBoolean()
+    .withMessage("Published must be a boolean"),
 ];
 
 // @desc    Update a post
@@ -251,23 +274,21 @@ const updatePostController = [
         }
       : [];
 
+    // Parse the published status.
+    const published = req.body.published
+      ? { published: req.body.published }
+      : undefined;
+
     const post = await prisma.blogPost.update({
       where: { id: req.query.id },
       data: {
         ...(title || {}),
         ...(content || {}),
         ...(tags || {}),
+        ...(published || {}),
       },
       select: {
-        id: true,
-        title: true,
-        content: true,
-        BlogPostTag: {
-          select: { tag: true },
-        },
-        updatedAt: true,
-        authorId: true,
-        BlogUser: { select: { username: true } },
+        ...selectModel,
       },
     });
 
