@@ -68,7 +68,9 @@ if (process.env.NODE_ENV === "development") {
   }
 }
 
-// Create the express app, export it for testing
+/**
+ * The main Express app. Export for testing.
+ */
 export const app = express();
 
 // Enable CORS
@@ -125,7 +127,9 @@ app.use((err, req, res, next) => {
   res.json({ error: msg });
 });
 
-// Prisma client, exported for other modules to use
+/**
+ * The Prisma client for database access. Export for controllers.
+ */
 export const prisma = new PrismaClient();
 
 // Disconnect the Prisma client when the server ends

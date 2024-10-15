@@ -12,6 +12,9 @@ import {
   userOauthCallbackController,
 } from "../controllers/userController.mjs";
 
+/**
+ * Router for users.
+ */
 const userRouter = express.Router();
 
 /**

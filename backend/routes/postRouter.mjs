@@ -8,6 +8,9 @@ import {
   deletePostController,
 } from "../controllers/postController.mjs";
 
+/**
+ * Router for posts.
+ */
 const postRouter = express.Router();
 
 /**

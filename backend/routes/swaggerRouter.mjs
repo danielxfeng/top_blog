@@ -5,6 +5,9 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
+/**
+ * Router for Swagger UI.
+ */
 const swaggerRouter = express.Router();
 
 // Define controller for production environment.

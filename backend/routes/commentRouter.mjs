@@ -7,6 +7,9 @@ import {
   deleteCommentController,
 } from "../controllers/commentController.mjs";
 
+/**
+ * Router for comments.
+ */
 const commentRouter = express.Router();
 
 /**

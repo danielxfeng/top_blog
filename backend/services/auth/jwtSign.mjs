@@ -11,7 +11,12 @@ const isLegalPayload = (payload) => {
   );
 };
 
-// Sign the JWT token
+/**
+ * Sign a JWT token with the payload.
+ * 
+ * @param {object} payload { id, username, isAdmin }
+ * @returns the JWT token
+ */
 const sign = (payload) => {
   if (!isLegalPayload(payload)) throw new Error("Illegal payload");
   try {
