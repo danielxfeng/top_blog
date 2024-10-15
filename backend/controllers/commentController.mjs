@@ -1,21 +1,32 @@
 import asyncHandler from "express-async-handler";
-import { query, body } from "express-validator";
 import { prisma } from "../app.mjs";
 import validate from "../services/validate.mjs";
+import {
+  getCommentsValidation,
+  createCommentValidation,
+  updateCommentValidation,
+  deleteCommentValidation,
+} from "./commentValidators.mjs";
 
-const getCommentsValidation = [
-  query("postId").isInt().toInt().withMessage("Post ID must be an integer."),
-  query("cursor")
-    .optional()
-    .isInt()
-    .toInt()
-    .withMessage("Cursor must be an integer."),
-  query("limit")
-    .optional()
-    .isInt({ min: 1 })
-    .toInt()
-    .withMessage("Limit must be an integer greater than 0."),
-];
+// The model of select clauses for the comment entity.
+const selectModel = {
+  id: true,
+  content: true,
+  updatedAt: true,
+  authorId: true,
+  BlogUser: { select: { username: true } },
+};
+
+// Generate a DAO from a comment entity.
+const generateDao = (comment) => {
+  return {
+    id: comment.id,
+    content: comment.content,
+    updatedAt: comment.updatedAt,
+    authorId: comment.authorId,
+    authorName: comment.BlogUser.username,
+  };
+};
 
 // @desc    Get all comments by post ID
 // @route   GET /api/comment
@@ -49,26 +60,15 @@ const getCommentsController = [
         updatedAt: "desc",
       },
       select: {
-        id: true,
-        content: true,
-        updatedAt: true,
-        authorId: true,
-      },
-      include: {
-        BlogUser: { select: { username: true } },
+        ...selectModel,
       },
     });
 
-    // Return the comments.
-    return res.json(comments);
-  }),
-];
+    const dao = comments.map((comment) => generateDao(comment));
 
-const createCommentValidation = [
-  query("postId").isInt().toInt().withMessage("Post ID must be an integer."),
-  body("content")
-    .isLength({ min: 1, max: 1024 })
-    .withMessage("Comment must be between 1 and 1024 characters"),
+    // Return the comments.
+    return res.json(dao);
+  }),
 ];
 
 // @desc    Create a comment
@@ -85,28 +85,13 @@ const createCommentController = [
         authorId: req.user.id,
       },
       select: {
-        id: true,
-        postId: true,
-        content: true,
-        updatedAt: true,
-        authorId: true,
-        include: {
-          BlogUser: { select: { username: true } },
-        },
+        ...selectModel,
       },
     });
-    return res.json(comment);
-  }),
-];
 
-const updateCommentValidation = [
-  query("commentId")
-    .isInt()
-    .toInt()
-    .withMessage("Comment ID must be an integer."),
-  body("content")
-    .isLength({ min: 1, max: 1024 })
-    .withMessage("Comment must be between 1 and 1024 characters"),
+    const dao = generateDao(comment);
+    return res.json(dao);
+  }),
 ];
 
 const updateCommentController = [
@@ -122,50 +107,41 @@ const updateCommentController = [
         content: req.body.content,
       },
       select: {
-        id: true,
-        postId: true,
-        content: true,
-        updatedAt: true,
-        authorId: true,
-        include: {
-          BlogUser: { select: { username: true } },
-        },
+        ...selectModel,
       },
     });
-    return res.json(comment);
-  }),
-];
 
-const deleteCommentValidation = [
-  query("commentId")
-    .isInt()
-    .toInt()
-    .withMessage("Comment ID must be an integer."),
+    const dao = generateDao(comment);
+    return res.json(dao);
+  }),
 ];
 
 // @desc    Delete a comment
 // @route   DELETE /api/comment
 // @access  Private
-const deleteCommentController = asyncHandler(async (req, res) => {
-  // Admin can delete any comment, the authors can only delete their own comment.
-  const authorId = req.user.isAdmin ? undefined : { authorId: req.user.id };
-  await prisma.blogComment.update({
-    where: {
-      id: req.query.commentId,
-      ...(authorId || {}),
-    },
-    data: {
-      isDeleted: true,
-    },
-  });
-  if (!deletedComment) {
-    return res.status(404).json({
-      message:
-        "Comment not found or you do not have permission to delete the comment.",
+const deleteCommentController = [
+  deleteCommentValidation,
+  asyncHandler(async (req, res) => {
+    // Admin can delete any comment, the authors can only delete their own comment.
+    const authorId = req.user.isAdmin ? undefined : { authorId: req.user.id };
+    await prisma.blogComment.update({
+      where: {
+        id: req.query.commentId,
+        ...(authorId || {}),
+      },
+      data: {
+        isDeleted: true,
+      },
     });
-  }
-  return res.json({ message: "Comment deleted" });
-});
+    if (!deletedComment) {
+      return res.status(404).json({
+        message:
+          "Comment not found or you do not have permission to delete the comment.",
+      });
+    }
+    return res.json({ message: "Comment deleted" });
+  }),
+];
 
 export {
   getCommentsController,
