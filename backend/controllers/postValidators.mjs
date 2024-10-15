@@ -1,5 +1,13 @@
 import { body, query } from "express-validator";
 
+const optionalTags = [
+  query("tags")
+    .optional()
+    .trim()
+    .isAlphanumeric("us_EN", { ignore: ", " })
+    .withMessage("Tags must be alphanumeric"),
+];
+
 const getPostsValidation = [
   query("cursor")
     .optional()
@@ -11,11 +19,7 @@ const getPostsValidation = [
     .isInt({ min: 1 })
     .toInt()
     .withMessage("Limit must be an integer greater than 0"),
-  query("tags")
-    .optional()
-    .trim()
-    .isAlphanumeric("us_EN", { ignore: ", " })
-    .withMessage("Tags must be alphanumeric"),
+  ...optionalTags,
   query("from").optional().isDate().withMessage("From must be a date"),
   query("to").optional().isDate().withMessage("To must be a date"),
 ];
@@ -31,12 +35,7 @@ const createPostValidation = [
     .trim()
     .isLength({ min: 1 })
     .withMessage("Content must be at least 1 character"),
-  body("tags")
-    .optional()
-    .isString()
-    .trim()
-    .isAlphanumeric("us_EN", { ignore: ", " })
-    .withMessage("Tags must be alphanumeric"),
+  ...optionalTags,
 ];
 
 const getPostValidation = [
@@ -44,7 +43,7 @@ const getPostValidation = [
 ];
 
 const updatePostValidation = [
-  query("id").isInt().toInt().withMessage("ID must be an integer"),
+  ...getPostValidation,
   body("title")
     .optional()
     .isString()
@@ -57,12 +56,7 @@ const updatePostValidation = [
     .trim()
     .isLength({ min: 1 })
     .withMessage("Content must be at least 1 character"),
-  body("tags")
-    .optional()
-    .isString()
-    .trim()
-    .isAlphanumeric("us_EN", { ignore: ", " })
-    .withMessage("Tags must be alphanumeric"),
+  ...optionalTags,
   body("published")
     .optional()
     .isBoolean()
