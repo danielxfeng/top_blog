@@ -64,7 +64,13 @@ CREATE UNIQUE INDEX "BlogUser_username_key" ON "BlogUser"("username");
 CREATE UNIQUE INDEX "BlogOauthUser_provider_subject_key" ON "BlogOauthUser"("provider", "subject");
 
 -- CreateIndex
+CREATE INDEX "BlogPost_updatedAt_idx" ON "BlogPost"("updatedAt" DESC);
+
+-- CreateIndex
 CREATE UNIQUE INDEX "BlogPostTag_tag_key" ON "BlogPostTag"("tag");
+
+-- CreateIndex
+CREATE INDEX "BlogComment_postId_updatedAt_idx" ON "BlogComment"("postId", "updatedAt" DESC);
 
 -- AddForeignKey
 ALTER TABLE "BlogOauthUser" ADD CONSTRAINT "BlogOauthUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "BlogUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
