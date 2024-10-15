@@ -51,6 +51,9 @@ const userRouter = express.Router();
  *             schema:
  *               type: object
  *               properties:
+ *                 id:
+ *                  type: integer
+ *                  description: The registered user ID
  *                 username:
  *                   type: string
  *                   description: The registered username
@@ -95,6 +98,9 @@ userRouter.post("/", userSignupController);
  *             schema:
  *               type: object
  *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The logged-in user ID
  *                 username:
  *                   type: string
  *                   description: The logged-in username
@@ -146,6 +152,9 @@ userRouter.get("/oauth/google", passport.authenticate("google"));
  *             schema:
  *               type: object
  *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The registered user ID
  *                 username:
  *                   type: string
  *                   description: The registered username
@@ -201,6 +210,9 @@ userRouter.get("/oauth/github", passport.authenticate("github"));
  *             schema:
  *               type: object
  *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The registered user ID
  *                 username:
  *                   type: string
  *                   description: The registered username
@@ -251,6 +263,9 @@ userRouter.use(auth());
  *             schema:
  *               type: object
  *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The user ID
  *                 username:
  *                   type: string
  *                   description: User's username, max 64 characters
@@ -313,6 +328,9 @@ userRouter.get("/", userInfoController);
  *             schema:
  *               type: object
  *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The user ID
  *                 username:
  *                   type: string
  *                   description: The registered username

@@ -1,9 +1,14 @@
 import jwt from "jsonwebtoken";
 
 // To check the payload for JWT signing is legal.
-// The payload must have a username and isAdmin.
+// The payload must have a id and username and isAdmin.
 const isLegalPayload = (payload) => {
-  return payload && payload.username && typeof payload.isAdmin === "boolean";
+  return (
+    payload &&
+    payload.id &&
+    payload.username &&
+    typeof payload.isAdmin === "boolean"
+  );
 };
 
 // Sign the JWT token

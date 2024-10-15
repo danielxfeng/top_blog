@@ -16,6 +16,7 @@ describe("User management tests", () => {
   });
 
   let token;
+  let id;
 
   it("A normal user's life circle, from registion to deletion.", async () => {
     // Create a new user, should reply a token.
@@ -27,12 +28,15 @@ describe("User management tests", () => {
     expect(response.headers.location).to.equal("/api/user");
 
     expect(response.body).to.deep.equal({
+      id: response.body.id,
       username: "testuser",
       isAdmin: false,
       token: response.body.token,
-    });
+    })
+    expect(response.body.id).to.be.a("number");
     expect(response.body.token).to.be.a("string");
-
+    
+    id = response.body.id;
     token = response.body.token;
   });
 
@@ -44,6 +48,7 @@ describe("User management tests", () => {
       .expect(200);
 
     expect(response.body).to.deep.equal({
+      id: id,
       username: "testuser",
       isAdmin: false,
       BlogOauthUser: [],
@@ -58,6 +63,7 @@ describe("User management tests", () => {
       .expect(200);
 
     expect(response.body).to.deep.equal({
+      id: id,
       username: "testuser",
       isAdmin: false,
       token: response.body.token,
@@ -76,6 +82,7 @@ describe("User management tests", () => {
       .expect(200);
 
     expect(response.body).to.deep.equal({
+      id: id,
       username: "testuser2",
       isAdmin: false,
       token: response.body.token,
@@ -97,6 +104,7 @@ describe("User management tests", () => {
       .expect(200);
 
     expect(response.body).to.deep.equal({
+      id: id,
       username: "testuser2",
       isAdmin: true,
       token: response.body.token,
@@ -122,6 +130,7 @@ describe("User management tests", () => {
       .expect(200);
 
     expect(response.body).to.deep.equal({
+      id: id,
       username: "testuser2",
       isAdmin: true,
       token: response.body.token,

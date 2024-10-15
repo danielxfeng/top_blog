@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { body, validationResult } from "express-validator";
+import { body } from "express-validator";
 import bcrypt from "bcryptjs";
 import { prisma } from "../app.mjs";
 import sign from "../services/auth/jwtSign.mjs";
@@ -12,6 +12,7 @@ const userInfoController = asyncHandler(async (req, res) => {
   const user = await prisma.blogUser.findFirst({
     where: { username: req.user.username, isDeleted: false },
     select: {
+      id: true,
       username: true,
       isAdmin: true,
       // Also fetch the blogOauthUser data
@@ -63,10 +64,16 @@ const userSignupController = [
         username,
         password: encryptedPassword,
       },
+      select: {
+        id: true,
+        username: true,
+        isAdmin: true,
+      },
     });
 
     // Prepare the JWT payload.
     const payload = {
+      id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
     };
@@ -76,6 +83,7 @@ const userSignupController = [
       .status(201)
       .location("/api/user")
       .json({
+        id: user.id,
         username: user.username,
         isAdmin: user.isAdmin,
         token: sign(payload),
@@ -131,9 +139,10 @@ const userUpdateController = [
 
     // Update the database.
     const user = await prisma.blogUser.update({
-      where: { username: req.user.username, isDeleted: false },
+      where: { id: req.user.id, isDeleted: false },
       data: updatedValue,
       select: {
+        id: true,
         username: true,
         isAdmin: true,
       },
@@ -141,12 +150,14 @@ const userUpdateController = [
 
     // Prepare the JWT payload.
     const payload = {
+      id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
     };
 
     // Send the response.
     return res.json({
+      id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
       token: sign(payload),
@@ -161,7 +172,7 @@ const userDeleteController = asyncHandler(async (req, res) => {
   const newUserName = `&DELETED&${await bcrypt.hash(req.user.username, 10)}`;
   // Soft delete the user.
   await prisma.blogUser.update({
-    where: { username: req.user.username, isDeleted: false },
+    where: { id: req.user.id, username: req.user.username, isDeleted: false },
     data: { isDeleted: true, deletedAt: new Date(), username: newUserName },
   });
 
@@ -197,7 +208,7 @@ const userLoginController = [
     // Read from the database.
     const user = await prisma.blogUser.findFirst({
       where: { username, isDeleted: false },
-      select: { username: true, isAdmin: true, password: true },
+      select: { id: true, username: true, isAdmin: true, password: true },
     });
 
     // Check the user and password.
@@ -207,12 +218,14 @@ const userLoginController = [
 
     // Prepare the JWT payload.
     const payload = {
+      id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
     };
 
     // Send the response.
     return res.json({
+      id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
       token: sign(payload),
@@ -226,11 +239,13 @@ const userLoginController = [
 const userOauthCallbackController = asyncHandler(async (req, res) => {
   // We have checked the user in middleware, so we can just return the token.
   const payload = {
+    id: req.user.id,
     username: req.user.username,
     isAdmin: req.user.isAdmin,
   };
 
   return res.json({
+    id: req.user.id,
     username: req.user.username,
     isAdmin: req.user.isAdmin,
     token: sign(payload),
