@@ -11,11 +11,9 @@ const jwtOptions = {
 // Verify the JWT token
 const jwtVerify = async (payload, done) => {
   try {
-    const id = payload.id; // extract the id from the payload
-    const username = payload.username; // extract the username from the payload
-    const isAdmin = payload.isAdmin; // extract the isAdmin from the payload
+    const { id, username, isAdmin } = payload;
     const user = await prisma.blogUser.findFirst({
-      where: { id, username, isAdmin, isDeleted: false},
+      where: { id, username, isAdmin, isDeleted: false },
       select: { id: true, username: true, isAdmin: true },
     });
     if (user) return done(null, user); // user exists
@@ -50,13 +48,14 @@ const getAuthenticatedUser = async (req, res, next) => {
 /**
  * Middleware for protecting routes. Will return 401 or 403 if the user is not authenticated or not an admin.
  * Should be applied to routes that require authentication or admin access.
- * 
+ *
  * @param {boolean} isAdminOnly If the route is for admin users only.
  */
 const auth = (isAdminOnly = false) => {
   return async (req, res, next) => {
     if (!req.user) return res.status(401).json({ message: req.loginMsg });
-    if (isAdminOnly && !req.user.isAdmin) return res.status(403).json({ message: "Forbidden" });
+    if (isAdminOnly && !req.user.isAdmin)
+      return res.status(403).json({ message: "Forbidden" });
     next();
   };
 };
