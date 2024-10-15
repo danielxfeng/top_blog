@@ -61,6 +61,9 @@ const commentRouter = express.Router();
  *                       authorId:
  *                         type: integer
  *                         description: The id of the author
+ *                       BlogUser.username:
+ *                         type: string
+ *                         description: The username of the author
  *       500:
  *         description: Server error
  */
@@ -120,6 +123,9 @@ commentRouter.get("/comment", getCommentsController);
  *                 authorId:
  *                   type: integer
  *                   description: The id of the author
+ *                 BlogUser.username:
+ *                   type: string
+ *                   description: The username of the author
  *       401:
  *         description: Unauthorized - invalid JWT token
  *       400:
@@ -183,6 +189,12 @@ commentRouter.post("/comment/", auth(), createCommentController);
  *                 updatedAt:
  *                   type: string
  *                   description: The date and time of the last update
+ *                 authorId:
+ *                   type: integer
+ *                   description: The id of the author
+ *                 BlogUser.username:
+ *                   type: string
+ *                   description: The username of the author
  *       401:
  *         description: Unauthorized - invalid JWT token
  *       404:

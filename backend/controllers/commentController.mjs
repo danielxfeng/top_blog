@@ -54,6 +54,9 @@ const getCommentsController = [
         updatedAt: true,
         authorId: true,
       },
+      include: {
+        BlogUser: { select: { username: true } },
+      },
     });
 
     // Return the comments.
@@ -87,6 +90,9 @@ const createCommentController = [
         content: true,
         updatedAt: true,
         authorId: true,
+        include: {
+          BlogUser: { select: { username: true } },
+        },
       },
     });
     return res.json(comment);
@@ -121,6 +127,9 @@ const updateCommentController = [
         content: true,
         updatedAt: true,
         authorId: true,
+        include: {
+          BlogUser: { select: { username: true } },
+        },
       },
     });
     return res.json(comment);
@@ -150,12 +159,10 @@ const deleteCommentController = asyncHandler(async (req, res) => {
     },
   });
   if (!deletedComment) {
-    return res
-      .status(404)
-      .json({
-        message:
-          "Comment not found or you do not have permission to delete the comment.",
-      });
+    return res.status(404).json({
+      message:
+        "Comment not found or you do not have permission to delete the comment.",
+    });
   }
   return res.json({ message: "Comment deleted" });
 });
