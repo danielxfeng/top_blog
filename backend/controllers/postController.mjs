@@ -146,23 +146,24 @@ const createPostController = [
     const tags = req.body.tags
       ? req.body.tags.split(", ").map((tag) => tag.trim())
       : [];
+    // The many to many relation.
+    // see https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations
+    const dataTags = tags
+      ? {
+          tags: {
+            create: tags.map((tag) => ({
+              tag: { connectOrCreate: { where: { tag }, create: { tag } } },
+            })),
+          },
+        }
+      : {};
 
     const post = await prisma.blogPost.create({
       data: {
         title: req.body.title,
         content: req.body.content,
         authorId: req.user.id,
-        tags: {
-          // Create or connect tags
-          create: tags.map((tag) => ({
-            tag: {
-              connectOrCreate: {
-                where: { tag },
-                create: { tag },
-              },
-            },
-          })),
-        },
+        ...dataTags,
         authorId: req.user.id,
       },
       select: { id: true },

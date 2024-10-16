@@ -52,7 +52,7 @@ describe("Basic post test", () => {
   });
 
   after(async () => {
-    await prisma.$disconnect();
+    //await prisma.$disconnect();
   });
 
   it("Returns a empty array when there is no posts.", async () => {
@@ -186,6 +186,7 @@ describe("Basic post test", () => {
     expect(response.body[2]).property("id").to.equal(postId);
     expect(response.body[2]).has.property("abstract").to.equal("Test content");
     expect(response.body.every((item) => item.published == false)).to.be.true;
+    console.log("response.body", response.body);
   });
 
   it("Returns a 200 with a good abstract property.", async () => {
