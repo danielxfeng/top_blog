@@ -207,24 +207,28 @@ const updatePostController = [
       : {};
 
     // Parse the published status.
-    const published = req.body.published
-      ? { published: req.body.published }
-      : {};
+    const published =
+      req.body.published !== undefined ? { published: req.body.published } : {};
 
-    const post = await prisma.blogPost.update({
-      where: { id: req.params.id },
-      data: {
-        ...title,
-        ...content,
-        ...tags,
-        ...published,
-      },
-      select: { ...selectModel },
-    });
+    try {
+      const post = await prisma.blogPost.update({
+        where: { id: req.params.id },
+        data: {
+          ...title,
+          ...content,
+          ...tags,
+          ...published,
+        },
+        select: { ...selectModel },
+      });
 
-    const dao = generateDao(post);
-
-    res.json(dao);
+      const dao = generateDao(post);
+      return res.json(dao);
+    } catch (error) {
+      if (error.code === "P2025")
+        return res.status(404).json({ message: "Post not found" });
+      throw error;
+    }
   }),
 ];
 
@@ -235,10 +239,16 @@ const deletePostController = [
   getPostValidation,
   validate,
   asyncHandler(async (req, res) => {
-    await prisma.blogPost.update({
-      where: { id: req.params.id },
-      data: { isDeleted: true },
-    });
+    try {
+      await prisma.blogPost.update({
+        where: { id: req.params.id },
+        data: { isDeleted: true },
+      });
+    } catch (error) {
+      if (error.code === "P2025")
+        return res.status(404).json({ message: "Post not found" });
+      throw error;
+    }
 
     res.status(204).end();
   }),

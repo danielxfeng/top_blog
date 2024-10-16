@@ -3,6 +3,7 @@
  */
 import request from "supertest";
 import { expect } from "chai";
+import { format, addDays } from "date-fns";
 import { app, prisma } from "../app.mjs";
 
 describe("Basic post test", () => {
@@ -16,7 +17,8 @@ describe("Basic post test", () => {
   let tagPostId; // The second post's ID.
   let tagsPostId; // The third post's ID.
   let cursor;
-  let timestamp; // The second post's updated time.
+  let dt; // The second post's updated time.
+  let updatedAt; // The first post's updated time.
 
   before(async () => {
     // Init the database.
@@ -81,6 +83,7 @@ describe("Basic post test", () => {
       .property("location")
       .to.equal(`/api/post/${response.body.id}`);
     postId = response.body.id;
+    updatedAt = response.body.updatedAt;
   });
 
   it("Returns a 200 when the post is found.", async () => {
@@ -138,7 +141,6 @@ describe("Basic post test", () => {
       .to.equal(`/api/post/${response.body.id}`);
 
     tagPostId = response.body.id;
-    timestamp = response.body.updatedAt;
   });
 
   it("Returns a 200 when the post is found with a tag.", async () => {
@@ -146,6 +148,8 @@ describe("Basic post test", () => {
       .get(`/api/post/${tagPostId}`)
       .expect(200);
     expect(response.body).property("tags").to.deep.equal(["tag1"]);
+
+    dt = format(new Date(response.body.updatedAt), "yyyy-MM-dd");
   });
 
   it("Returns a 201 when a post is created with multiple tags.", async () => {
@@ -186,7 +190,6 @@ describe("Basic post test", () => {
     expect(response.body[2]).property("id").to.equal(postId);
     expect(response.body[2]).has.property("abstract").to.equal("Test content");
     expect(response.body.every((item) => item.published == false)).to.be.true;
-    console.log("response.body", response.body);
   });
 
   it("Returns a 200 with a good abstract property.", async () => {
@@ -235,19 +238,192 @@ describe("Basic post test", () => {
     expect(response.body).to.have.lengthOf(2);
 
     const response2 = await request(app)
-    .get("/api/post?tags=tag2")
-    .set("Authorization", `Bearer ${adminToken}`)
-    .expect(200);
+      .get("/api/post?tags=tag2")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
 
     expect(response2.body).to.have.lengthOf(1);
 
     const response3 = await request(app)
-    .get("/api/post?tags=tag2,tag3")
-    .set("Authorization", `Bearer ${adminToken}`)
-    .expect(200);
+      .get("/api/post?tags=tag2,tag3")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
 
     expect(response3.body).to.have.lengthOf(1);
   });
 
+  it("Returns the right post when filer by datarange, from only", async () => {
+    const response = await request(app)
+      .get(`/api/post?from=${dt}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
 
+    expect(response.body).to.have.lengthOf(3);
+  });
+
+  it("Returns the right post when filer by datarange, to only", async () => {
+    const response = await request(app)
+      .get(`/api/post?to=${dt}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(response.body).to.have.lengthOf(0);
+  });
+
+  it("Returns the right post when filer by datarange, from + 1", async () => {
+    const response = await request(app)
+      .get(`/api/post?from=${format(addDays(new Date(dt), 1), "yyyy-MM-dd")}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(response.body).to.have.lengthOf(0);
+  });
+
+  it("Returns the right post when filer by datarange, to + 1", async () => {
+    const response = await request(app)
+      .get(`/api/post?to=${format(addDays(new Date(dt), 1), "yyyy-MM-dd")}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(response.body).to.have.lengthOf(3);
+  });
+
+  it("Returns the right post when filer by datarange, from - 1, to + 1", async () => {
+    const response = await request(app)
+      .get(
+        `/api/post?from=${format(
+          addDays(new Date(dt), -1),
+          "yyyy-MM-dd"
+        )}&to=${format(addDays(new Date(dt), 1), "yyyy-MM-dd")}`
+      )
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(200);
+
+    expect(response.body).to.have.lengthOf(3);
+  });
+
+  it("Returns 200 when the title is updated.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ title: "New title1" })
+      .expect(200);
+
+    expect(response.body).property("title").to.equal("New title1");
+    expect(response.body).property("updatedAt").to.not.equal(updatedAt);
+    updatedAt = response.body.updatedAt;
+  });
+
+  it("Returns 200 when the content is updated.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ content: "New content1" })
+      .expect(200);
+
+    expect(response.body).property("content").to.equal("New content1");
+    expect(response.body).property("updatedAt").to.not.equal(updatedAt);
+    updatedAt = response.body.updatedAt;
+  });
+
+  it("Returns 200 when the post is published.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ published: true })
+      .expect(200);
+
+    expect(response.body).property("published").to.be.true;
+    expect(response.body).property("updatedAt").to.not.equal(updatedAt);
+    updatedAt = response.body.updatedAt;
+  });
+
+  it("Returns 1 post when reading all posts without login.", async () => {
+    const response = await request(app)
+      .get("/api/post")
+      .expect(200);
+
+    expect(response.body).to.have.lengthOf(1);
+  });
+
+  it("Returns 200 when the post is unpublished.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ published: false })
+      .expect(200);
+
+    expect(response.body).property("published").to.be.false;
+    expect(response.body).property("updatedAt").to.not.equal(updatedAt);
+  });
+
+  it("Returns 400 when set the title to empty.", async () => {
+    await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ title: "" })
+      .expect(400);
+  });
+
+  it("Returns 403 when update by a normal user.", async () => {
+    await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .send({ title: "T" })
+      .expect(403);
+  });
+
+  it("Returns 401 when update without the token.", async () => {
+    await request(app)
+      .put(`/api/post/${postId}`)
+      .send({ title: "T" })
+      .expect(401);
+  });
+
+  it("Returns 404 when update an invalid post.", async () => {
+    await request(app)
+      .put(`/api/post/0`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ title: "T" })
+      .expect(404);
+  });
+
+  /** 
+  it("Returns 200 and the tag is updated by adding a tag.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ tags: "tag2" })
+      .expect(200);
+
+    expect(response.body).property("tags").to.deep.equal(["tag2"]);
+  });
+  */
+
+  it("Returns 204 when the post is deleted.", async () => {
+    await request(app)
+      .delete(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(204);
+  });
+
+  it("Returns 403 when try to delete a post by user.", async () => {
+    await request(app)
+      .delete(`/api/post/${tagPostId}`)
+      .set("Authorization", `Bearer ${userToken}`)
+      .expect(403);
+  });
+
+  it("Returns 401 when try to delete a post without login.", async () => {
+    await request(app)
+      .delete(`/api/post/${tagPostId}`)
+      .expect(401);
+  });
+
+  it("Returns 404 when try to delete an invalid post.", async () => {
+    await request(app)
+      .delete(`/api/post/0`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(404);
+  });
 });
