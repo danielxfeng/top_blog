@@ -226,21 +226,28 @@ describe("Basic post test", () => {
     expect(response.body).to.deep.equal([]);
   });
 
-  /** 
   it("Returns right posts when filter by tag.", async () => {
-    const res = await request(app)
-      .get("/api/post")
+    const response = await request(app)
+      .get("/api/post?tags=tag1")
       .set("Authorization", `Bearer ${adminToken}`)
       .expect(200);
 
-    console.log("posts", res.body);
-
-    const response = await request(app)
-      .get("/api/post?tags=tag1")
-      .set("Authorization", `Bearer ${userToken}`)
-      .expect(200);
-
     expect(response.body).to.have.lengthOf(2);
+
+    const response2 = await request(app)
+    .get("/api/post?tags=tag2")
+    .set("Authorization", `Bearer ${adminToken}`)
+    .expect(200);
+
+    expect(response2.body).to.have.lengthOf(1);
+
+    const response3 = await request(app)
+    .get("/api/post?tags=tag2,tag3")
+    .set("Authorization", `Bearer ${adminToken}`)
+    .expect(200);
+
+    expect(response3.body).to.have.lengthOf(1);
   });
-  */
+
+
 });

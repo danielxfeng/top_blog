@@ -4,7 +4,7 @@ const optionalTags = [
   query("tags")
     .optional()
     .trim()
-    .isAlphanumeric("en-US", { ignore: ", " })
+    .isAlphanumeric("en-US", { ignore: "," })
     .withMessage("Tags must be alphanumeric"),
 ];
 

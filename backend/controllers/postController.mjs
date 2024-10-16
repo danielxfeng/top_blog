@@ -76,7 +76,9 @@ const getPostsController = [
       ? {
           tags: {
             some: {
-              tag: { in: req.query.tags.split(",").map((tag) => tag.trim()) },
+              tag: {
+                tag: { in: req.query.tags.split(",").map((tag) => tag.trim()) },
+              },
             },
           },
         }
@@ -95,8 +97,8 @@ const getPostsController = [
         ? {}
         : { updatedAt: { gte: from || new Date(0), lte: to || new Date() } };
 
-    // Fetch the posts.
-    const posts = await prisma.blogPost.findMany({
+    // Abstrct the query command for debugging.
+    const prismaQuery = {
       ...skip,
       ...cursor,
       where: {
@@ -108,7 +110,10 @@ const getPostsController = [
       take: limit,
       orderBy: { updatedAt: "desc" },
       select: { ...selectModel },
-    });
+    };
+
+    // Fetch the posts.
+    const posts = await prisma.blogPost.findMany(prismaQuery);
 
     // Prepare the response.
     let dao = posts.map((post) => generateDao(post, true));
@@ -144,7 +149,7 @@ const createPostController = [
   asyncHandler(async (req, res) => {
     // Parse the tags.
     const tags = req.body.tags
-      ? req.body.tags.split(", ").map((tag) => tag.trim())
+      ? req.body.tags.split(",").map((tag) => tag.trim())
       : [];
     // The many to many relation.
     // see https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations

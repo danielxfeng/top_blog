@@ -37,7 +37,7 @@ const postRouter = express.Router();
  *         name: tags
  *         schema:
  *           type: string
- *           example: "tag1, tag2"
+ *           example: "tag1,tag2"
  *         description: Filter posts by tags.
  *       - in: query
  *         name: from
@@ -246,7 +246,7 @@ postRouter.post("/", createPostController);
  *               tags:
  *                 type: string
  *                 description: The tags of the post
- *                 example: "tag1, tag2"
+ *                 example: "tag1,tag2"
  *     responses:
  *       200:
  *         description: OK
