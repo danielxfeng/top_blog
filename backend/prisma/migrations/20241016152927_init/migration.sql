@@ -36,12 +36,19 @@ CREATE TABLE "BlogPost" (
 );
 
 -- CreateTable
-CREATE TABLE "BlogPostTag" (
+CREATE TABLE "BlogTag" (
     "id" SERIAL NOT NULL,
     "tag" TEXT NOT NULL,
+
+    CONSTRAINT "BlogTag_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "BlogTagOnPost" (
+    "tagId" INTEGER NOT NULL,
     "postId" INTEGER NOT NULL,
 
-    CONSTRAINT "BlogPostTag_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "BlogTagOnPost_pkey" PRIMARY KEY ("tagId","postId")
 );
 
 -- CreateTable
@@ -67,7 +74,7 @@ CREATE UNIQUE INDEX "BlogOauthUser_provider_subject_key" ON "BlogOauthUser"("pro
 CREATE INDEX "BlogPost_updatedAt_idx" ON "BlogPost"("updatedAt" DESC);
 
 -- CreateIndex
-CREATE UNIQUE INDEX "BlogPostTag_tag_key" ON "BlogPostTag"("tag");
+CREATE UNIQUE INDEX "BlogTag_tag_key" ON "BlogTag"("tag");
 
 -- CreateIndex
 CREATE INDEX "BlogComment_postId_updatedAt_idx" ON "BlogComment"("postId", "updatedAt" DESC);
@@ -79,7 +86,10 @@ ALTER TABLE "BlogOauthUser" ADD CONSTRAINT "BlogOauthUser_userId_fkey" FOREIGN K
 ALTER TABLE "BlogPost" ADD CONSTRAINT "BlogPost_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "BlogUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "BlogPostTag" ADD CONSTRAINT "BlogPostTag_postId_fkey" FOREIGN KEY ("postId") REFERENCES "BlogPost"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "BlogTagOnPost" ADD CONSTRAINT "BlogTagOnPost_tagId_fkey" FOREIGN KEY ("tagId") REFERENCES "BlogTag"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "BlogTagOnPost" ADD CONSTRAINT "BlogTagOnPost_postId_fkey" FOREIGN KEY ("postId") REFERENCES "BlogPost"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BlogComment" ADD CONSTRAINT "BlogComment_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "BlogUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
