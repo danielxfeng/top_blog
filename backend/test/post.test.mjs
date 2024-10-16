@@ -388,7 +388,6 @@ describe("Basic post test", () => {
       .expect(404);
   });
 
-  /** 
   it("Returns 200 and the tag is updated by adding a tag.", async () => {
     const response = await request(app)
       .put(`/api/post/${postId}`)
@@ -398,7 +397,26 @@ describe("Basic post test", () => {
 
     expect(response.body).property("tags").to.deep.equal(["tag2"]);
   });
-  */
+
+  it("Returns 200 and the tag is updated by replace the tags.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ tags: "tag1,tag3" })
+      .expect(200);
+
+    expect(response.body).property("tags").to.deep.equal(["tag1", "tag3"]);
+  });
+
+  it("Returns 200 and the tag is updated by replace some tags.", async () => {
+    const response = await request(app)
+      .put(`/api/post/${postId}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({ tags: "tag2,tag3" })
+      .expect(200);
+
+    expect(response.body).property("tags").to.deep.equal(["tag2", "tag3"]);
+  });
 
   it("Returns 204 when the post is deleted.", async () => {
     await request(app)

@@ -72,11 +72,12 @@ const getPostsController = [
         : req.query.limit;
 
     // Parse the tags.
-    const tags = req.query.tags
+    const tags = s2arr(req.query.tags);
+    const tagsData = tags.length
       ? {
           tags: {
             some: {
-              tag: { in: req.query.tags.split(",").map((tag) => tag.trim()) },
+              tag: { in: tags },
             },
           },
         }
@@ -100,7 +101,7 @@ const getPostsController = [
       ...skip,
       ...cursor,
       where: {
-        ...tags,
+        ...tagsData,
         ...dateRange,
         ...published,
         isDeleted: false,
@@ -138,6 +139,9 @@ const getPostController = [
   }),
 ];
 
+// Convert a string to an array by comma.
+const s2arr = (s) => (s ? s.split(",").map((tag) => tag.trim()) : []);
+
 // @desc    Create a post
 // @route   POST /api/post
 // @access  Private
@@ -146,12 +150,10 @@ const createPostController = [
   validate,
   asyncHandler(async (req, res) => {
     // Parse the tags.
-    const tags = req.body.tags
-      ? req.body.tags.split(",").map((tag) => tag.trim())
-      : [];
+    const tags = s2arr(req.body.tags);
     // The many to many relation.
     // see https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations
-    const dataTags = tags
+    const dataTags = tags.length
       ? {
           tags: {
             connectOrCreate: tags.map((tag) => ({
@@ -162,7 +164,7 @@ const createPostController = [
         }
       : {};
 
-    const post = await prisma.blogPost.create({
+    const prismaQuery = {
       data: {
         title: req.body.title,
         content: req.body.content,
@@ -171,8 +173,9 @@ const createPostController = [
         authorId: req.user.id,
       },
       select: { id: true },
-    });
+    };
 
+    const post = await prisma.blogPost.create(prismaQuery);
     res.status(201).location(`/api/post/${post.id}`).json(post);
   }),
 ];
@@ -191,15 +194,15 @@ const updatePostController = [
     const content = req.body.content ? { content: req.body.content } : {};
 
     // Parse the tags.
-    // Upsert the tags if they do not exist.
-    // see https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#nested-writes
-    const tags = req.body.tags
+    // see: https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries#disconnect-all-related-records
+    const tags = s2arr(req.body.tags);
+    const tagsData = tags.length
       ? {
           tags: {
-            upsert: req.body.tags.map((tag) => ({
-              create: { tag },
-              update: { tag },
+            set: [], // Means to disconnect all the tags.
+            connectOrCreate: tags.map((tag) => ({
               where: { tag },
+              create: { tag },
             })),
           },
         }
@@ -209,18 +212,19 @@ const updatePostController = [
     const published =
       req.body.published !== undefined ? { published: req.body.published } : {};
 
-    try {
-      const post = await prisma.blogPost.update({
-        where: { id: req.params.id },
-        data: {
-          ...title,
-          ...content,
-          ...tags,
-          ...published,
-        },
-        select: { ...selectModel },
-      });
+    const prismaQuery = {
+      where: { id: req.params.id },
+      data: {
+        ...title,
+        ...content,
+        ...tagsData,
+        ...published,
+      },
+      select: { ...selectModel },
+    };
 
+    try {
+      const post = await prisma.blogPost.update(prismaQuery);
       const dao = generateDao(post);
       return res.json(dao);
     } catch (error) {
