@@ -56,7 +56,7 @@ const generateVerifyFunc = (provider) => async (req, profile, done) => {
         data: {
           provider,
           subject: profile.id,
-          BlogUser: { connect: { id: req.user.id } },
+          user: { connect: { id: req.user.id } },
         },
       });
       return done(null, req.user);
@@ -66,7 +66,7 @@ const generateVerifyFunc = (provider) => async (req, profile, done) => {
     const newUser = await prisma.blogUser.create({
       data: {
         username: profile.displayName || profile.username,
-        blogOauthUser: { create: { provider: provider, subject: profile.id } },
+        oauths: { create: { provider: provider, subject: profile.id } },
       },
       select: { id: true, username: true, isAdmin: true },
     });

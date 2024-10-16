@@ -70,13 +70,13 @@
                           "authorId": {
                             "type": "integer",
                             "description": "The id of the author"
+                          },
+                          "BlogUser.username": {
+                            "type": "string",
+                            "description": "The username of the author"
                           }
                         }
                       }
-                    },
-                    "total": {
-                      "type": "integer",
-                      "description": "The total number of posts"
                     }
                   }
                 }
@@ -156,6 +156,10 @@
                     "authorId": {
                       "type": "integer",
                       "description": "The id of the author"
+                    },
+                    "BlogUser.username": {
+                      "type": "string",
+                      "description": "The username of the author"
                     }
                   }
                 }
@@ -243,6 +247,14 @@
                     "updatedAt": {
                       "type": "string",
                       "description": "The date and time of the last update"
+                    },
+                    "authorId": {
+                      "type": "integer",
+                      "description": "The id of the author"
+                    },
+                    "BlogUser.username": {
+                      "type": "string",
+                      "description": "The username of the author"
                     }
                   }
                 }
@@ -315,12 +327,12 @@
         "parameters": [
           {
             "in": "query",
-            "name": "startTimestamp",
+            "name": "cursor",
             "schema": {
               "type": "integer",
               "example": 1
             },
-            "description": "Return posts updated before the startTimestamp."
+            "description": "The cursor for pagination."
           },
           {
             "in": "query",
@@ -380,15 +392,30 @@
                             "type": "string",
                             "description": "The title of the post"
                           },
-                          "content": {
+                          "abstract": {
                             "type": "string",
-                            "description": "The content of the post"
+                            "description": "The sliced content of the post"
                           },
+                          "published": {
+                            "type": "boolean",
+                            "description": "The published status of the post"
+                          },
+                          "tags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "description": "The tags of the post",
                           "updatedAt": {
                             "type": "string",
                             "description": "The date and time of the last update"
                           },
-                          "BlogUser.username": {
+                          "authorId": {
+                            "type": "string",
+                            "description": "The username of the author"
+                          },
+                          "authorName": {
                             "type": "string",
                             "description": "The username of the author"
                           }
@@ -522,11 +549,26 @@
                       "type": "string",
                       "description": "The content of the post"
                     },
+                    "published": {
+                      "type": "boolean",
+                      "description": "The published status of the post"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "The tags of the post"
+                      }
+                    },
                     "updatedAt": {
                       "type": "string",
                       "description": "The last update date of the post"
                     },
-                    "BlogUser.username": {
+                    "authorId": {
+                      "type": "string",
+                      "description": "The username of the author"
+                    },
+                    "authorName": {
                       "type": "string",
                       "description": "The username of the author"
                     }
@@ -583,6 +625,11 @@
                   "content": {
                     "type": "string",
                     "description": "The content of the post"
+                  },
+                  "tags": {
+                    "type": "string",
+                    "description": "The tags of the post",
+                    "example": "tag1, tag2"
                   }
                 }
               }
@@ -609,11 +656,26 @@
                       "type": "string",
                       "description": "The content of the post"
                     },
+                    "published": {
+                      "type": "boolean",
+                      "description": "The published status of the post"
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "The tags of the post"
+                      }
+                    },
                     "updatedAt": {
                       "type": "string",
                       "description": "The last update date of the post"
                     },
-                    "BlogUser.username": {
+                    "authorId": {
+                      "type": "string",
+                      "description": "The username of the author"
+                    },
+                    "authorName": {
                       "type": "string",
                       "description": "The username of the author"
                     }

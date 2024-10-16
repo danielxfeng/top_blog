@@ -21,7 +21,7 @@ const userInfoController = asyncHandler(async (req, res) => {
       isAdmin: true,
       // Also fetch the blogOauthUser data
       // because user may want to link or unlink their OAuth account.
-      BlogOauthUser: {
+      oauths: {
         select: {
           provider: true,
           subject: true,

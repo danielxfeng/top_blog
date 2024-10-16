@@ -50,7 +50,7 @@ describe("A normal user from registion to deletion", () => {
       id: id,
       username: "testuser",
       isAdmin: false,
-      BlogOauthUser: [],
+      oauths: [],
     });
   });
 

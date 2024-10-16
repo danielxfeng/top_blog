@@ -275,7 +275,7 @@ userRouter.use(auth());
  *                 isAdmin:
  *                   type: boolean
  *                   description: Is the user an admin
- *                 oauthProviders:
+ *                 oauths:
  *                   type: array
  *                   description: List of OAuth providers and subjects
  *                   items:
