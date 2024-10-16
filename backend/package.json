@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.mjs",
   "scripts": {
-    "test": "NODE_ENV=test && mocha",
+    "test": "clear && NODE_ENV=test && mocha",
     "dev": "NODE_ENV=development && node --watch app.mjs",
     "start": "NODE_ENV=production && node app.mjs",
     "prisma": "npx prisma init",
