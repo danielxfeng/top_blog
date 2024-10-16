@@ -1,10 +1,10 @@
-import { body, query } from "express-validator";
+import { body, query, param } from "express-validator";
 
 const optionalTags = [
   query("tags")
     .optional()
     .trim()
-    .isAlphanumeric("us_EN", { ignore: ", " })
+    .isAlphanumeric("en-US", { ignore: ", " })
     .withMessage("Tags must be alphanumeric"),
 ];
 
@@ -39,7 +39,7 @@ const createPostValidation = [
 ];
 
 const getPostValidation = [
-  query("id").isInt().toInt().withMessage("ID must be an integer"),
+  param("id").isInt().toInt().withMessage("ID must be an integer"),
 ];
 
 const updatePostValidation = [

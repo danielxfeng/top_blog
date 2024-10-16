@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import validate from "../services/validate.mjs";
-import { prisma } from "../services/prismaClient.mjs";
+import { prisma } from "../app.mjs";
 import {
   getPostsValidation,
   createPostValidation,
@@ -13,13 +13,15 @@ const selectModel = {
   id: true,
   title: true,
   content: true,
-  BlogPostTag: {
+  tags: {
     select: { tag: true },
   },
   published: true,
   updatedAt: true,
   authorId: true,
-  BlogUser: { select: { username: true } },
+  author: {
+    select: { username: true },
+  },
 };
 
 // Generate a DAO from a post entity.
@@ -31,24 +33,21 @@ const generateDao = (post, isAbstract = false) => {
     return str.length > length ? str.slice(0, length - 3) + "..." : str;
   };
 
+  const maxAbstractLength = parseInt(process.env.MAX_ABSTRACT_LENGTH);
   const optional = isAbstract
     ? {
-        abstract: cutString(
-          post.content,
-          process.env.MAX_ABSTRACT_LENGTH || 100
-        ),
+        abstract: cutString(post.content, maxAbstractLength || 100),
       }
     : { content: post.content };
-
   return {
     id: post.id,
     title: post.title,
     ...optional,
     published: post.published,
-    tags: post.BlogPostTag.map((tag) => tag.tag),
+    tags: post.tags.map((item) => item.tag.tag),
     updatedAt: post.updatedAt,
     authorId: post.authorId,
-    authorname: post.BlogUser.username,
+    authorName: post.author.username,
   };
 };
 
@@ -60,9 +59,8 @@ const getPostsController = [
   validate,
   asyncHandler(async (req, res) => {
     // Deal with the possible cursor for pagination
-    const cursor = req.query.cursor
-      ? { cursor: { id: req.query.cursor } }
-      : {};
+    const cursor = req.query.cursor ? { cursor: { id: req.query.cursor } } : {};
+    const skip = req.query.cursor ? { skip: 1 } : {};
 
     // Parse the limit for pagination.
     // The maximum limit is the MAX_PAGE_SIZE
@@ -75,7 +73,13 @@ const getPostsController = [
 
     // Parse the tags.
     const tags = req.query.tags
-      ? { tags: { hasSome: req.query.tags.split(", ") } }
+      ? {
+          tags: {
+            some: {
+              tag: { in: req.query.tags.split(",").map((tag) => tag.trim()) },
+            },
+          },
+        }
       : {};
 
     // Output the unpublished posts if the user is an admin.
@@ -93,32 +97,21 @@ const getPostsController = [
 
     // Fetch the posts.
     const posts = await prisma.blogPost.findMany({
+      ...skip,
+      ...cursor,
       where: {
         ...tags,
         ...dateRange,
         ...published,
-        ...cursor,
         isDeleted: false,
       },
       take: limit,
       orderBy: { updatedAt: "desc" },
-      select: {
-        ...selectModel,
-      },
+      select: { ...selectModel },
     });
 
     // Prepare the response.
     let dao = posts.map((post) => generateDao(post, true));
-
-    // We only send the abstract for the posts.
-    dao.forEach((post) => {
-      post.abstract = post.content.slice(
-        0,
-        process.env.MAX_ABSTRACT_LENGTH || 100
-      );
-      delete post.content;
-    });
-
     res.json(dao);
   }),
 ];
@@ -131,20 +124,14 @@ const getPostController = [
   validate,
   asyncHandler(async (req, res) => {
     const post = await prisma.blogPost.findUnique({
-      where: { id: req.query.id },
-      select: {
-        ...selectModel,
-      },
+      where: { id: req.params.id },
+      select: { ...selectModel },
     });
 
-    if (!post) {
-      res.status(404);
-      throw new Error("Post not found");
-    }
+    if (!post) return res.status(404).json({ message: "Post not found" });
 
     const dao = generateDao(post);
-
-    res.json(generateDao(dao));
+    res.json(dao);
   }),
 ];
 
@@ -165,22 +152,23 @@ const createPostController = [
         title: req.body.title,
         content: req.body.content,
         authorId: req.user.id,
-        BlogPostTag: {
-          // Create the tags if they do not exist
-          // see https://www.prisma.io/docs/orm/prisma-client/queries/relation-queries
-          connectOrCreate: tags.map((tag) => ({
-            where: { tag },
-            create: { tag },
+        tags: {
+          // Create or connect tags
+          create: tags.map((tag) => ({
+            tag: {
+              connectOrCreate: {
+                where: { tag },
+                create: { tag },
+              },
+            },
           })),
         },
         authorId: req.user.id,
       },
-      select: {
-        id: true,
-      },
+      select: { id: true },
     });
 
-    res.status(201).location(`/post/${post.id}`).json(post);
+    res.status(201).location(`/api/post/${post.id}`).json(post);
   }),
 ];
 
@@ -195,16 +183,14 @@ const updatePostController = [
     const title = req.body.title ? { title: req.body.title } : {};
 
     // Parse the content.
-    const content = req.body.content
-      ? { content: req.body.content }
-      : {};
+    const content = req.body.content ? { content: req.body.content } : {};
 
     // Parse the tags.
     // Upsert the tags if they do not exist.
     // see https://www.prisma.io/docs/concepts/components/prisma-client/relation-queries#nested-writes
     const tags = req.body.tags
       ? {
-          BlogPostTag: {
+          tags: {
             upsert: req.body.tags.map((tag) => ({
               create: { tag },
               update: { tag },
@@ -220,16 +206,14 @@ const updatePostController = [
       : {};
 
     const post = await prisma.blogPost.update({
-      where: { id: req.query.id },
+      where: { id: req.params.id },
       data: {
         ...title,
         ...content,
         ...tags,
         ...published,
       },
-      select: {
-        ...selectModel,
-      },
+      select: { ...selectModel },
     });
 
     const dao = generateDao(post);
@@ -246,7 +230,7 @@ const deletePostController = [
   validate,
   asyncHandler(async (req, res) => {
     await prisma.blogPost.update({
-      where: { id: req.query.id },
+      where: { id: req.params.id },
       data: { isDeleted: true },
     });
 
