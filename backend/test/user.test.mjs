@@ -6,7 +6,7 @@ import request from "supertest";
 import { expect } from "chai";
 import { app, prisma } from "../app.mjs";
 
-describe("User management tests", () => {
+describe("A normal user from registion to deletion", () => {
   before(async () => {
     await prisma.$executeRaw`TRUNCATE TABLE "BlogUser", "BlogOauthUser" CASCADE;`;
   });
@@ -18,7 +18,7 @@ describe("User management tests", () => {
   let token;
   let id;
 
-  it("A normal user's life circle, from registion to deletion.", async () => {
+  it("Returns 201 when a new user is registed", async () => {
     // Create a new user, should reply a token.
     const response = await request(app)
       .post("/api/user")
@@ -32,16 +32,15 @@ describe("User management tests", () => {
       username: "testuser",
       isAdmin: false,
       token: response.body.token,
-    })
+    });
     expect(response.body.id).to.be.a("number");
     expect(response.body.token).to.be.a("string");
-    
+
     id = response.body.id;
     token = response.body.token;
   });
 
-  // Get by the token, should reply the user info.
-  it("Get a user", async () => {
+  it("Returns 200 when get a user", async () => {
     const response = await request(app)
       .get("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -55,8 +54,7 @@ describe("User management tests", () => {
     });
   });
 
-  // Login the user, should reply the same token.
-  it("Login a user", async () => {
+  it("Returns 200 with the same token when log in a user", async () => {
     const response = await request(app)
       .post("/api/user/login")
       .send({ username: "testuser", password: "testpassword" })
@@ -73,8 +71,7 @@ describe("User management tests", () => {
     expect(response.body.token).to.equal(token);
   });
 
-  // Update the username, should reply the updated info and a new token.
-  it("Update a username", async () => {
+  it("Returns 200 with new token when username is updated", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -93,9 +90,7 @@ describe("User management tests", () => {
     token = response.body.token;
   });
 
-  // Update the isAdmin, should reply the updated info and  a new token.
-  // And got 401 when trying to get the user by the old token.
-  it("Update the isAdmin", async () => {
+  it("Returns 200 with new token when isAdmin status changed, and returns 401 when tried old token", async () => {
     process.env.ADMIN_CODE = "testuser2";
     const response = await request(app)
       .put("/api/user")
@@ -120,9 +115,7 @@ describe("User management tests", () => {
     token = response.body.token;
   });
 
-  // Update the password, should reply the same info,
-  // and the token is also the same.
-  it("Update the passowrd", async () => {
+  it("Returns 200 with same token when updated the password", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -141,9 +134,7 @@ describe("User management tests", () => {
     token = response.body.token;
   });
 
-  // Delete the user, should reply 204.
-  // And got 401 when trying to get the user by the token.
-  it("Delete a user", async () => {
+  it("Returns 204 after deleted a user, and 401 when tried to log in with old token.", async () => {
     const response = await request(app)
       .delete("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -165,7 +156,7 @@ describe("Illegal input test when signup", () => {
     await prisma.$disconnect();
   });
 
-  it("The empty input", async () => {
+  it("Returns 400 when try the empty input", async () => {
     const response = await request(app).post("/api/user").send().expect(400);
 
     expect(response.body).to.deep.equal({
@@ -173,7 +164,7 @@ describe("Illegal input test when signup", () => {
     });
   });
 
-  it("The length voliation when signup", async () => {
+  it("Returns 400 when signup with invalid length", async () => {
     const response = await request(app)
       .post("/api/user")
       .send({ username: "a", password: "a" })
@@ -184,7 +175,7 @@ describe("Illegal input test when signup", () => {
     });
   });
 
-  it("The illegal character when signup", async () => {
+  it("Returns 400 when signup with illegal characters", async () => {
     const response = await request(app)
       .post("/api/user")
       .send({ username: "testuser!", password: "testpassword" })
@@ -195,7 +186,7 @@ describe("Illegal input test when signup", () => {
     });
   });
 
-  it("The existed username when signup", async () => {
+  it("Returns 400 when signup with existed user", async () => {
     const response = await request(app)
       .post("/api/user")
       .send({ username: "testuser", password: "testpassword" })
@@ -207,7 +198,7 @@ describe("Illegal input test when signup", () => {
       .expect(400);
   });
 
-  it("Send not json data when signup", async () => {
+  it("Returns 400 when signup with invalid data", async () => {
     const response = await request(app)
       .post("/api/user")
       .send("test")
@@ -226,7 +217,7 @@ describe("Illegal input test when login", () => {
 
   let token;
 
-  it("The empty input", async () => {
+  it("Returns 400 when try the empty input", async () => {
     const response = await request(app)
       .post("/api/user/login")
       .send()
@@ -237,7 +228,7 @@ describe("Illegal input test when login", () => {
     });
   });
 
-  it("The length voliation when login", async () => {
+  it("Returns 400 when login with the length voliation", async () => {
     const response = await request(app)
       .post("/api/user/login")
       .send({ username: "a", password: "a" })
@@ -248,7 +239,7 @@ describe("Illegal input test when login", () => {
     });
   });
 
-  it("The illegal character when login", async () => {
+  it("Returns 400 when login with the illegal character", async () => {
     const response = await request(app)
       .post("/api/user/login")
       .send({ username: "testuser!", password: "testpassword" })
@@ -259,7 +250,7 @@ describe("Illegal input test when login", () => {
     });
   });
 
-  it("The not existed username when login", async () => {
+  it("Returns 400 when login with not existed user", async () => {
     const response = await request(app)
       .post("/api/user/login")
       .send({ username: "testuser", password: "testpassword" })
@@ -282,7 +273,7 @@ describe("Illegal input test when update", () => {
     await prisma.$disconnect();
   });
 
-  it("The empty input", async () => {
+  it("Returns 400 when try the empty input", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -290,7 +281,7 @@ describe("Illegal input test when update", () => {
       .expect(400);
   });
 
-  it("The length voliation when update", async () => {
+  it("Returns 400 when update with the length voliation", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -302,7 +293,7 @@ describe("Illegal input test when update", () => {
     });
   });
 
-  it("The illegal character when update", async () => {
+  it("Returns 400 when update with the illegal character", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -314,7 +305,7 @@ describe("Illegal input test when update", () => {
     });
   });
 
-  it("The not existed admin code when update", async () => {
+  it("Returns 400 when update with invalid adminCode", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}`)
@@ -322,7 +313,7 @@ describe("Illegal input test when update", () => {
       .expect(400);
   });
 
-  it("The not existed user when update", async () => {
+  it("Returns 401 when update with the not existed user", async () => {
     const response = await request(app)
       .put("/api/user")
       .set("Authorization", `Bearer ${token}2`)
@@ -330,7 +321,7 @@ describe("Illegal input test when update", () => {
       .expect(401);
   });
 
-  it("No token when update", async () => {
+  it("Returns 401 when update without the token", async () => {
     const response = await request(app).put("/api/user").send().expect(401);
   });
 });
@@ -345,14 +336,14 @@ describe("Illegal input test when delete", () => {
     await prisma.$disconnect();
   });
 
-  it("The not existed user when delete", async () => {
+  it("Returns 401 when delete with a non existed user", async () => {
     const response = await request(app)
       .delete("/api/user")
       .set("Authorization", `Bearer 2`)
       .expect(401);
   });
 
-  it("No token when delete", async () => {
+  it("Returns 401 when delete without token", async () => {
     const response = await request(app).delete("/api/user").expect(401);
   });
 });
@@ -372,14 +363,14 @@ describe("Illegal input test when get", () => {
     await prisma.$disconnect();
   });
 
-  it("The not existed user when get", async () => {
+  it("Returns 401 when get with not existed user", async () => {
     const response = await request(app)
       .get("/api/user")
       .set("Authorization", `Bearer 2`)
       .expect(401);
   });
 
-  it("No token when get", async () => {
+  it("Returns 401 when get without token", async () => {
     const response = await request(app).get("/api/user").expect(401);
   });
 });
