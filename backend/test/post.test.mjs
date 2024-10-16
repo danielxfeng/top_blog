@@ -22,7 +22,7 @@ describe("Basic post test", () => {
 
   before(async () => {
     // Init the database.
-    await prisma.$executeRaw`TRUNCATE TABLE "BlogUser", "BlogOauthUser", "BlogPost", "BlogTag", "BlogTagOnPost" CASCADE;`;
+    await prisma.$executeRaw`TRUNCATE TABLE "BlogUser", "BlogOauthUser", "BlogPost", "BlogTag" CASCADE;`;
 
     // Create a normal user and an admin user.
     const response = await request(app)

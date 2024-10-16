@@ -44,7 +44,7 @@ const generateDao = (post, isAbstract = false) => {
     title: post.title,
     ...optional,
     published: post.published,
-    tags: post.tags.map((item) => item.tag.tag),
+    tags: post.tags.map((item) => item.tag),
     updatedAt: post.updatedAt,
     authorId: post.authorId,
     authorName: post.author.username,
@@ -76,9 +76,7 @@ const getPostsController = [
       ? {
           tags: {
             some: {
-              tag: {
-                tag: { in: req.query.tags.split(",").map((tag) => tag.trim()) },
-              },
+              tag: { in: req.query.tags.split(",").map((tag) => tag.trim()) },
             },
           },
         }
@@ -156,8 +154,9 @@ const createPostController = [
     const dataTags = tags
       ? {
           tags: {
-            create: tags.map((tag) => ({
-              tag: { connectOrCreate: { where: { tag }, create: { tag } } },
+            connectOrCreate: tags.map((tag) => ({
+              where: { tag },
+              create: { tag },
             })),
           },
         }
