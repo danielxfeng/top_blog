@@ -1,6 +1,9 @@
 /**
  * The test for the user management.
  * Have not test the OAuth part.
+ * The JWT signs different token regularly,
+ * so sometimes the same token tests will fail.
+ * In these cases, just re-run the test.
  */
 import request from "supertest";
 import { expect } from "chai";
