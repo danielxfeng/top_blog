@@ -90,9 +90,6 @@ const postRouter = express.Router();
  *                       authorName:
  *                         type: string
  *                         description: The username of the author
- *                 total:
- *                   type: integer
- *                   description: The total number of posts
  *       500:
  *         description: Server error
  */

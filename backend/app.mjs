@@ -12,6 +12,7 @@ import swaggerRouter from "./routes/swaggerRouter.mjs";
 import userRouter from "./routes/userRouter.mjs";
 import postRouter from "./routes/postRouter.mjs";
 import commentRouter from "./routes/commentRouter.mjs";
+import tagRouter from "./routes/tagRouter.mjs";
 import {
   jwtStrategy,
   getAuthenticatedUser,
@@ -97,7 +98,7 @@ app.use("/", swaggerRouter);
 
 // The user related routes, like:
 // - register/login/logout/manage/delete.
-// - Google OAuth.
+// - Google/Github OAuth.
 app.use("/api/user", userRouter);
 
 // The posts related routes, like:
@@ -109,6 +110,10 @@ app.use("/api/post", postRouter);
 // The comments related routes, like:
 //  - create/edit/delete a comment. Only authenticated user can do this.
 app.use("/api/comment", commentRouter);
+
+// The tags related routes, like:
+// - list all tags and the count of posts.
+app.use("/api/tag", tagRouter);
 
 // 404 Error handler
 app.use((req, res, next) => {
