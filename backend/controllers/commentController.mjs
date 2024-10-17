@@ -7,6 +7,7 @@ import {
   updateCommentValidation,
   deleteCommentValidation,
 } from "./commentValidators.mjs";
+import e from "express";
 
 // The model of select clauses for the comment entity.
 const selectModel = {
@@ -14,18 +15,7 @@ const selectModel = {
   content: true,
   updatedAt: true,
   authorId: true,
-  BlogUser: { select: { username: true } },
-};
-
-// Generate a DAO from a comment entity.
-const generateDao = (comment) => {
-  return {
-    id: comment.id,
-    content: comment.content,
-    updatedAt: comment.updatedAt,
-    authorId: comment.authorId,
-    authorName: comment.BlogUser.username,
-  };
+  postId: true,
 };
 
 // @desc    Get all comments by post ID
@@ -37,7 +27,7 @@ const getCommentsController = [
   asyncHandler(async (req, res) => {
     // Parse the cursor for pagination.
     const cursor = req.query.cursor
-      ? { cursor: { id: req.query.cursor } }
+      ? { cursor: { id: req.query.cursor }, skip: 1 }
       : {};
     // Parse the limit for pagination.
     // The maximum limit is the MAX_PAGE_SIZE
@@ -64,10 +54,8 @@ const getCommentsController = [
       },
     });
 
-    const dao = comments.map((comment) => generateDao(comment));
-
     // Return the comments.
-    return res.json(dao);
+    return res.json(comments);
   }),
 ];
 
@@ -78,19 +66,24 @@ const createCommentController = [
   createCommentValidation,
   validate,
   asyncHandler(async (req, res) => {
-    const comment = await prisma.blogComment.create({
-      data: {
-        content: req.body.content,
-        postId: req.query.postId,
-        authorId: req.user.id,
-      },
-      select: {
-        ...selectModel,
-      },
-    });
+    try {
+      const comment = await prisma.blogComment.create({
+        data: {
+          content: req.body.content,
+          postId: req.query.postId,
+          authorId: req.user.id,
+        },
+        select: {
+          id: true,
+        },
+      });
 
-    const dao = generateDao(comment);
-    return res.json(dao);
+      return res.status(201).json(comment);
+    } catch (error) {
+      if (error.code === "P2003")
+        return res.status(404).json({ message: "Post not found" });
+      else throw error;
+    }
   }),
 ];
 
@@ -98,21 +91,26 @@ const updateCommentController = [
   updateCommentValidation,
   validate,
   asyncHandler(async (req, res) => {
-    const comment = await prisma.blogComment.update({
-      where: {
-        id: req.query.commentId,
-        authorId: req.user.id, // We should only allow the author to update the comment.
-      },
-      data: {
-        content: req.body.content,
-      },
-      select: {
-        ...selectModel,
-      },
-    });
+    try {
+      const comment = await prisma.blogComment.update({
+        where: {
+          id: req.params.id,
+          authorId: req.user.id, // We should only allow the author to update the comment.
+        },
+        data: {
+          content: req.body.content,
+        },
+        select: {
+          ...selectModel,
+        },
+      });
 
-    const dao = generateDao(comment);
-    return res.json(dao);
+      return res.json(comment);
+    } catch (error) {
+      if (error.code === "P2025")
+        return res.status(404).json({ message: "Comment not found or the user has not the permission." });
+      else throw error;
+    }
   }),
 ];
 
@@ -124,22 +122,23 @@ const deleteCommentController = [
   asyncHandler(async (req, res) => {
     // Admin can delete any comment, the authors can only delete their own comment.
     const authorId = req.user.isAdmin ? {} : { authorId: req.user.id };
-    await prisma.blogComment.update({
-      where: {
-        id: req.query.commentId,
-        ...authorId,
-      },
-      data: {
-        isDeleted: true,
-      },
-    });
-    if (!deletedComment) {
-      return res.status(404).json({
-        message:
-          "Comment not found or you do not have permission to delete the comment.",
+    try {
+      await prisma.blogComment.update({
+        where: {
+          id: req.params.id,
+          ...authorId,
+        },
+        data: {
+          isDeleted: true,
+        },
       });
+      return res.status(204).end();
+    } catch (error) {
+      if (error.code === "P2025")
+        return res.status(404).json({ message: "Comment not found or the user has not the permission." });
+      else throw error;
     }
-    return res.json({ message: "Comment deleted" });
+
   }),
 ];
 

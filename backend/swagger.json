@@ -18,7 +18,7 @@
             "name": "postId",
             "required": true,
             "schema": {
-              "type": "string",
+              "type": "interger",
               "example": 1,
               "description": "The ID of the post to which the comments belong"
             }
@@ -56,7 +56,7 @@
                         "type": "object",
                         "properties": {
                           "id": {
-                            "type": "string",
+                            "type": "integer",
                             "description": "The ID of the comment"
                           },
                           "content": {
@@ -71,9 +71,9 @@
                             "type": "integer",
                             "description": "The id of the author"
                           },
-                          "BlogUser.username": {
-                            "type": "string",
-                            "description": "The username of the author"
+                          "postId": {
+                            "type": "interger",
+                            "description": "The id of the post"
                           }
                         }
                       }
@@ -113,7 +113,7 @@
                 "type": "object",
                 "properties": {
                   "postId": {
-                    "type": "string",
+                    "type": "interger",
                     "description": "The ID of the post to which the comment belongs"
                   },
                   "content": {
@@ -138,28 +138,8 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string",
+                      "type": "interger",
                       "description": "The ID of the created comment"
-                    },
-                    "postId": {
-                      "type": "string",
-                      "description": "The ID of the post"
-                    },
-                    "content": {
-                      "type": "string",
-                      "description": "The content of the comment"
-                    },
-                    "updatededAt": {
-                      "type": "string",
-                      "description": "The date and time of the last update"
-                    },
-                    "authorId": {
-                      "type": "integer",
-                      "description": "The id of the author"
-                    },
-                    "BlogUser.username": {
-                      "type": "string",
-                      "description": "The username of the author"
                     }
                   }
                 }
@@ -233,11 +213,11 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string",
+                      "type": "interger",
                       "description": "The ID of the updated comment"
                     },
                     "postId": {
-                      "type": "string",
+                      "type": "interger",
                       "description": "The ID of the post"
                     },
                     "content": {
@@ -247,14 +227,6 @@
                     "updatedAt": {
                       "type": "string",
                       "description": "The date and time of the last update"
-                    },
-                    "authorId": {
-                      "type": "integer",
-                      "description": "The id of the author"
-                    },
-                    "BlogUser.username": {
-                      "type": "string",
-                      "description": "The username of the author"
                     }
                   }
                 }
@@ -385,7 +357,7 @@
                         "type": "object",
                         "properties": {
                           "id": {
-                            "type": "string",
+                            "type": "integer",
                             "description": "The ID of the post"
                           },
                           "title": {
@@ -412,7 +384,7 @@
                             "description": "The date and time of the last update"
                           },
                           "authorId": {
-                            "type": "string",
+                            "type": "integer",
                             "description": "The username of the author"
                           },
                           "authorName": {
@@ -494,7 +466,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string",
+                      "type": "integer",
                       "description": "The ID of the post"
                     }
                   }
@@ -524,7 +496,7 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "The ID of the post"
           }
@@ -538,7 +510,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string",
+                      "type": "integer",
                       "description": "The ID of the post"
                     },
                     "title": {
@@ -565,7 +537,7 @@
                       "description": "The last update date of the post"
                     },
                     "authorId": {
-                      "type": "string",
+                      "type": "integer",
                       "description": "The username of the author"
                     },
                     "authorName": {
@@ -606,7 +578,7 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "The ID of the post"
           }
@@ -645,7 +617,7 @@
                   "type": "object",
                   "properties": {
                     "id": {
-                      "type": "string",
+                      "type": "integer",
                       "description": "The ID of the post"
                     },
                     "title": {
@@ -672,7 +644,7 @@
                       "description": "The last update date of the post"
                     },
                     "authorId": {
-                      "type": "string",
+                      "type": "integer",
                       "description": "The username of the author"
                     },
                     "authorName": {
@@ -716,7 +688,7 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             },
             "description": "The ID of the post"
           }

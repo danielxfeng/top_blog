@@ -54,7 +54,7 @@ describe("Basic post test", () => {
   });
 
   after(async () => {
-    //await prisma.$disconnect();
+    await prisma.$disconnect();
   });
 
   it("Returns a empty array when there is no posts.", async () => {

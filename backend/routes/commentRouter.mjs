@@ -70,7 +70,7 @@ const commentRouter = express.Router();
  *       500:
  *         description: Server error
  */
-commentRouter.get("/comment", getCommentsController);
+commentRouter.get("/", getCommentsController);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ commentRouter.get("/comment", getCommentsController);
  *       500:
  *         description: Server error
  */
-commentRouter.post("/comment/", auth(), createCommentController);
+commentRouter.post("/", auth(), createCommentController);
 
 /**
  * @swagger
@@ -186,7 +186,7 @@ commentRouter.post("/comment/", auth(), createCommentController);
  *       500:
  *         description: Server error
  */
-commentRouter.put("/comment/:id", auth(), updateCommentController);
+commentRouter.put("/:id", auth(), updateCommentController);
 
 /**
  * @swagger
@@ -221,6 +221,6 @@ commentRouter.put("/comment/:id", auth(), updateCommentController);
  *       500:
  *         description: Server error
  */
-commentRouter.delete("/comments/:id", auth(), deleteCommentController);
+commentRouter.delete("/:id", auth(), deleteCommentController);
 
 export default commentRouter;
