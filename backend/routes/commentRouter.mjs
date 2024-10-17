@@ -24,7 +24,7 @@ const commentRouter = express.Router();
  *         name: postId
  *         required: true
  *         schema:
- *           type: string
+ *           type: interger
  *           example: 1
  *           description: The ID of the post to which the comments belong
  *       - in: query
@@ -53,7 +53,7 @@ const commentRouter = express.Router();
  *                     type: object
  *                     properties:
  *                       id:
- *                         type: string
+ *                         type: integer
  *                         description: The ID of the comment
  *                       content:
  *                         type: string
@@ -64,9 +64,9 @@ const commentRouter = express.Router();
  *                       authorId:
  *                         type: integer
  *                         description: The id of the author
- *                       BlogUser.username:
- *                         type: string
- *                         description: The username of the author
+ *                       postId:
+ *                         type: interger
+ *                         description: The id of the post
  *       500:
  *         description: Server error
  */
@@ -95,7 +95,7 @@ commentRouter.get("/comment", getCommentsController);
  *             type: object
  *             properties:
  *               postId:
- *                 type: string
+ *                 type: interger
  *                 description: The ID of the post to which the comment belongs
  *               content:
  *                 type: string
@@ -112,23 +112,8 @@ commentRouter.get("/comment", getCommentsController);
  *               type: object
  *               properties:
  *                 id:
- *                   type: string
+ *                   type: interger
  *                   description: The ID of the created comment
- *                 postId:
- *                   type: string
- *                   description: The ID of the post
- *                 content:
- *                   type: string
- *                   description: The content of the comment
- *                 updatededAt:
- *                   type: string
- *                   description: The date and time of the last update
- *                 authorId:
- *                   type: integer
- *                   description: The id of the author
- *                 BlogUser.username:
- *                   type: string
- *                   description: The username of the author
  *       401:
  *         description: Unauthorized - invalid JWT token
  *       400:
@@ -181,10 +166,10 @@ commentRouter.post("/comment/", auth(), createCommentController);
  *               type: object
  *               properties:
  *                 id:
- *                   type: string
+ *                   type: interger
  *                   description: The ID of the updated comment
  *                 postId:
- *                   type: string
+ *                   type: interger
  *                   description: The ID of the post
  *                 content:
  *                   type: string
@@ -192,12 +177,6 @@ commentRouter.post("/comment/", auth(), createCommentController);
  *                 updatedAt:
  *                   type: string
  *                   description: The date and time of the last update
- *                 authorId:
- *                   type: integer
- *                   description: The id of the author
- *                 BlogUser.username:
- *                   type: string
- *                   description: The username of the author
  *       401:
  *         description: Unauthorized - invalid JWT token
  *       404:

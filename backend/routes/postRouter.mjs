@@ -65,7 +65,7 @@ const postRouter = express.Router();
  *                     type: object
  *                     properties:
  *                       id:
- *                         type: string
+ *                         type: integer
  *                         description: The ID of the post
  *                       title:
  *                         type: string
@@ -85,7 +85,7 @@ const postRouter = express.Router();
  *                         type: string
  *                         description: The date and time of the last update
  *                       authorId:
- *                         type: string
+ *                         type: integer
  *                         description: The username of the author
  *                       authorName:
  *                         type: string
@@ -110,7 +110,7 @@ postRouter.get("/", getPostsController);
  *         name: id
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: The ID of the post
  *     responses:
  *       200:
@@ -121,7 +121,7 @@ postRouter.get("/", getPostsController);
  *               type: object
  *               properties:
  *                 id:
- *                   type: string
+ *                   type: integer
  *                   description: The ID of the post
  *                 title:
  *                   type: string
@@ -141,7 +141,7 @@ postRouter.get("/", getPostsController);
  *                   type: string
  *                   description: The last update date of the post
  *                 authorId:
- *                   type: string
+ *                   type: integer
  *                   description: The username of the author
  *                 authorName:
  *                   type: string
@@ -200,7 +200,7 @@ postRouter.use(auth(true));
  *               type: object
  *               properties:
  *                 id:
- *                   type: string
+ *                   type: integer
  *                   description: The ID of the post
  *       400:
  *         description: Invalid input
@@ -228,7 +228,7 @@ postRouter.post("/", createPostController);
  *         name: id
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: The ID of the post
  *     requestBody:
  *       required: true
@@ -256,7 +256,7 @@ postRouter.post("/", createPostController);
  *               type: object
  *               properties:
  *                 id:
- *                   type: string
+ *                   type: integer
  *                   description: The ID of the post
  *                 title:
  *                   type: string
@@ -276,7 +276,7 @@ postRouter.post("/", createPostController);
  *                   type: string
  *                   description: The last update date of the post
  *                 authorId:
- *                   type: string
+ *                   type: integer
  *                   description: The username of the author
  *                 authorName:
  *                   type: string
@@ -308,7 +308,7 @@ postRouter.put("/:id", updatePostController);
  *         name: id
  *         required: true
  *         schema:
- *           type: string
+ *           type: integer
  *         description: The ID of the post
  *     responses:
  *       204:
