@@ -159,7 +159,7 @@ const userDeleteController = asyncHandler(async (req, res) => {
     data: { isDeleted: true, deletedAt: new Date(), username: newUserName },
   });
 
-  return res.status(204).end();
+  return res.status(204).json({ message: "User deleted" });
 });
 
 // @desc    Login user
