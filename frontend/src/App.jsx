@@ -1,10 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { Outlet } from "react-router-dom";
 
 const App = () => {
   return (
-    <div className="p-2">
-      <h1>Hello World</h1>
-      <Button>Click me</Button>
+    <div className="container flex flex-col min-h-screen">
+      <header></header>
+      <main>
+        <Outlet />
+      </main>
+      <footer></footer>
     </div>
   );
 };
