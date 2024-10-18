@@ -1,3 +1,5 @@
+import React from "react";
+
 // A static home page.
 const Home = () => {
   return (
