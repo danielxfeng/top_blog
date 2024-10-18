@@ -130,6 +130,7 @@ dist
 .pnp.*
 
 *.local
+.vite/
 
 # Editor directories and files
 .vscode/*

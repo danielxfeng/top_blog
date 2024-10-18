@@ -1,4 +1,6 @@
+import React from "react";
 import { Outlet } from "react-router-dom";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
@@ -7,7 +9,7 @@ const App = () => {
       <main>
         <Outlet />
       </main>
-      <footer></footer>
+      <Footer />
     </div>
   );
 };

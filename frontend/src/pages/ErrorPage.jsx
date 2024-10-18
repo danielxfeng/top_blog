@@ -1,3 +1,5 @@
+import React from "react";
+
 import { useRouteError, Link } from "react-router-dom";
 
 // The ErrorPage displays an error message when an unexpected error occurs.
