@@ -2,8 +2,10 @@ const host = "http://localhost:3000/api";
 
 // A helper function to parse the JSON response body.
 const parseResponse = async (response) => {
-  if (!response.ok)
-    throw new Error(`Error: ${response.status}, ${await response.json()}`);
+  if (!response.ok) {
+    const content = await response.json();
+    throw new Error(content.message || "Unknown error");
+  }
   if (response.status === 204) return {};
   return response.json();
 };
