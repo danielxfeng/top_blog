@@ -16,8 +16,8 @@ import {
 describe("Post API Test", () => {
   let ids = [];
   beforeAll(async () => {
-    await userRegister("testAdmin", "testpassword");
-    await userLogin("testAdmin", "testpassword");
+    await userRegister("testAdminPost", "testpassword");
+    await userLogin("testAdminPost", "testpassword");
     await updateUserInfo({ adminCode: "adminCode" });
   });
 
@@ -125,9 +125,9 @@ describe("Post API Test", () => {
   });
 
   it("Returns true when deleting a post", async () => {
-    //const id = ids.shift();
-    //const result = await deletePost(id);
-    //expect(result).toBe(true);
+    const id = ids.shift();
+    const result = await deletePost(id);
+    expect(result).toBe(true);
   });
 
   it("Returns an error when deleting a non-existent post", async () => {
