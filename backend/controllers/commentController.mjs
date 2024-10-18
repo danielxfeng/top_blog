@@ -132,7 +132,7 @@ const deleteCommentController = [
           isDeleted: true,
         },
       });
-      return res.status(204).end();
+      return res.status(204).json({ message: "Comment deleted" });
     } catch (error) {
       if (error.code === "P2025")
         return res.status(404).json({ message: "Comment not found or the user has not the permission." });

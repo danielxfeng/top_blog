@@ -6,7 +6,7 @@ const App = () => {
   return (
     <div className="container flex flex-col min-h-screen">
       <header></header>
-      <main>
+      <main className="flex-1 flex flex-col">
         <Outlet />
       </main>
       <Footer />

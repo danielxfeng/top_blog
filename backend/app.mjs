@@ -31,6 +31,11 @@ process.env.PORT =
     ? process.env.PORT_PROD || 80
     : process.env.PORT_DEV || 3000;
 
+process.env.ADMIN_CODE =
+  process.env.NODE_ENV === "production"
+    ? process.env.ADMIN_CODE_PROD
+    : process.env.ADMIN_CODE_DEV;
+
 switch (process.env.NODE_ENV) {
   case "production":
     process.env.DB_URL = process.env.DB_URL_PROD;
