@@ -5,7 +5,7 @@ import request from "supertest";
 import { expect } from "chai";
 import { app, prisma } from "../app.mjs";
 
-describe("Comment management test", () => {
+describe("Tag management test", () => {
   before(async () => {
     // Init the database.
     await prisma.$executeRaw`TRUNCATE TABLE "BlogUser", "BlogOauthUser", "BlogPost", "BlogTag" CASCADE;`;
@@ -37,14 +37,19 @@ describe("Comment management test", () => {
       .expect(200);
     adminToken = response2.body.token;
 
+    let ids = [];
+    let post = null;
     // Create several posts with tags.
-    await request(app)
+    // This post is included in result.
+    post = await request(app)
       .post("/api/post")
       .set("Authorization", `Bearer ${adminToken}`)
       .send({ title: "Test post", content: "Test content", tags: "tag1,tag2" })
       .expect(201);
+    ids.push(post.body.id);
 
-    await request(app)
+    // This post is included in result.
+    post = await request(app)
       .post("/api/post")
       .set("Authorization", `Bearer ${adminToken}`)
       .send({
@@ -53,8 +58,10 @@ describe("Comment management test", () => {
         tags: "tag1,tag3",
       })
       .expect(201);
+    ids.push(post.body.id);
 
-    await request(app)
+    // This post is included in result.
+    post = await request(app)
       .post("/api/post")
       .set("Authorization", `Bearer ${adminToken}`)
       .send({
@@ -63,6 +70,44 @@ describe("Comment management test", () => {
         tags: "tag1,tag2",
       })
       .expect(201);
+    ids.push(post.body.id);
+
+    // This post is excluded in result since it is deleted.
+    post = await request(app)
+      .post("/api/post")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({
+        title: "Test postd",
+        content: "Test content2",
+        tags: "tag2",
+      })
+      .expect(201);
+    await request(app)
+      .delete(`/api/post/${post.body.id}`)
+      .set("Authorization", `Bearer ${adminToken}`)
+      .expect(204);
+
+    // This post is excluded in result since it is unpublished.
+    await request(app)
+      .post("/api/post")
+      .set("Authorization", `Bearer ${adminToken}`)
+      .send({
+        title: "Test postd",
+        content: "Test content2",
+        tags: "tag2",
+      })
+      .expect(201);
+
+    // Publish the posts which will be included in the result.
+    await Promise.all(
+      ids.map((id) => {
+        return request(app)
+          .put(`/api/post/${id}`)
+          .set("Authorization", `Bearer ${adminToken}`)
+          .send({ published: true })
+          .expect(200);
+      })
+    );
 
     const testResponse = await request(app).get("/api/tag").expect(200);
 

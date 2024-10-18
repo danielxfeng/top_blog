@@ -5,24 +5,27 @@ import { prisma } from "../app.mjs";
 // @route   GET /api/tag
 // @access  Public
 const getTagsController = asyncHandler(async (req, res) => {
-  const tags = await prisma.blogTag.findMany({
+  const results = await prisma.blogTag.findMany({
     select: {
       tag: true,
-      _count: { select: { posts: true } },
+      posts: { select: { isDeleted: true, published: true } },
     },
-    orderBy: { posts: { _count: "desc" } },
   });
 
-  // Generate a DAO from a tag entity.
-  const generateDao = (tag) => {
-    return {
-      tag: tag.tag,
-      count: tag._count.posts,
-    };
-  };
+  // count the number of posts for each tag.
+  const countPosts = results
+    .map((item) => {
+      // count posts by tag
+      return {
+        tag: item.tag,
+        count: item.posts.filter((post) => !post.isDeleted && post.published)
+          .length,
+      };
+    })
+    .filter((item) => item.count > 0) // remove tags with no posts
+    .sort((a, b) => b.count - a.count); // sort by count
 
-  const dao = tags.map((tag) => generateDao(tag));
-  return res.json(dao);
+  return res.json(countPosts);
 });
 
 export { getTagsController };
