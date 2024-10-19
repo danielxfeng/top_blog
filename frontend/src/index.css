@@ -8,7 +8,7 @@
        URL: https://gradient.page */
 
     /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: linear-gradient(to top left,#091E3A,#2F80ED,#2D9EE0);
+    --gradient: linear-gradient(to top left, #091e3a, #2f80ed, #2d9ee0);
     --background: 228 98.65% 98.26%;
     --foreground: 228 7.3% 0.52%;
     --muted: 228 7.3% 91.3%;
@@ -33,14 +33,14 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
   .dark {
     /* Name: custom color palette
        Author: Ilias Ism
        URL: https://gradient.page */
     /* CSS: .bg-gradient { background: var(--gradient) } */
-    --gradient: linear-gradient(to top left,#00d2ff,#3a7bd5);
+    --gradient: linear-gradient(to top left, #00d2ff, #3a7bd5);
     --background: 203 65% 4%;
     --foreground: 203 10% 97.5%;
     --muted: 203 50% 15%;
@@ -64,7 +64,7 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
 @layer base {
@@ -73,5 +73,25 @@
   }
   body {
     @apply bg-background text-foreground;
+    @apply font-text;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  button {
+    @apply font-title;
+  }
+  .bg-gradient {
+    background: var(--gradient);
+  }
+
+  .text-gradient {
+    background: var(--gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
   }
 }
