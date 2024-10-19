@@ -14,7 +14,7 @@ const ErrorPage = ({ errMsg }) => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header isFromError={true}  />
       <main className="flex-1 flex flex-col gap-5 items-center justify-center">
         <h1 className="text-4xl text-gradient">Oops!</h1>
         <p>Sorry, an unexpected error has occurred.</p>
