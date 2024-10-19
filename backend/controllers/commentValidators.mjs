@@ -22,14 +22,18 @@ const getCommentsValidation = [
     .withMessage("Limit must be an integer greater than 0."),
 ];
 
-const createCommentValidation = [
-  ...postIdValidation,
+const contentValidation = [
   body("content")
     .isLength({ min: 1, max: 1024 })
     .withMessage("Comment must be between 1 and 1024 characters"),
 ];
 
-const updateCommentValidation = [...idValidation, ...createCommentValidation];
+const createCommentValidation = [
+  ...postIdValidation,
+  ...contentValidation,
+];
+
+const updateCommentValidation = [...idValidation, ...contentValidation];
 
 const deleteCommentValidation = [...idValidation];
 
