@@ -205,7 +205,7 @@ describe("Comment management test", () => {
 
   it("Returns 200 when the content of a comment is updated", async () => {
     const response = await request(app)
-      .put(`/api/comment/${commentId1}?postId=${postId}`)
+      .put(`/api/comment/${commentId1}`)
       .set("Authorization", `Bearer ${userToken1}`)
       .send({ content: "Updated comment" })
       .expect(200);
@@ -218,14 +218,14 @@ describe("Comment management test", () => {
 
   it("Returns 401 when the content of a comment is updated without a token", async () => {
     await request(app)
-      .put(`/api/comment/${commentId1}?postId=${postId}`)
+      .put(`/api/comment/${commentId1}`)
       .send({ content: "Updated comment" })
       .expect(401);
   });
 
   it("Returns 404 when the content of a comment is updated by another user", async () => {
     await request(app)
-      .put(`/api/comment/${commentId1}?postId=${postId}`)
+      .put(`/api/comment/${commentId1}`)
       .set("Authorization", `Bearer ${userToken2}`)
       .send({ content: "Updated comment" })
       .expect(404);
@@ -233,7 +233,7 @@ describe("Comment management test", () => {
 
   it("Returns 404 when the content of a comment is updated by an admin", async () => {
     await request(app)
-      .put(`/api/comment/${commentId1}?postId=${postId}`)
+      .put(`/api/comment/${commentId1}`)
       .set("Authorization", `Bearer ${adminToken}`)
       .send({ content: "Updated comment" })
       .expect(404);
@@ -241,7 +241,7 @@ describe("Comment management test", () => {
 
   it("Returns 400 when the content of a comment is updated with an empty content", async () => {
     await request(app)
-      .put(`/api/comment/${commentId1}?postId=${postId}`)
+      .put(`/api/comment/${commentId1}`)
       .set("Authorization", `Bearer ${userToken1}`)
       .send({ content: "" })
       .expect(400);
@@ -249,7 +249,7 @@ describe("Comment management test", () => {
 
   it("Returns 404 when the content of a comment is updated with an invalid id", async () => {
     await request(app)
-      .put(`/api/comment/0?postId=${postId}`)
+      .put(`/api/comment/0`)
       .set("Authorization", `Bearer ${userToken1}`)
       .send({ content: "Updated comment" })
       .expect(404);
@@ -257,7 +257,7 @@ describe("Comment management test", () => {
 
   it("Returns 400 when the content of a comment is updated with a too long content", async () => {
     await request(app)
-      .put(`/api/comment/${commentId1}?postId=${postId}`)
+      .put(`/api/comment/${commentId1}`)
       .set("Authorization", `Bearer ${userToken1}`)
       .send({ content: "a".repeat(1025) })
       .expect(400);
