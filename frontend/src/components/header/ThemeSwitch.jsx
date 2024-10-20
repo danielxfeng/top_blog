@@ -24,7 +24,11 @@ const ThemeSwitcher = () => {
       : document.documentElement.classList.remove("dark");
   }, [isDarkMode]);
 
-  const iconProps = { size: 32, onClick: switchTheme };
+  const iconProps = {
+    size: 32,
+    onClick: switchTheme,
+    "data-testid": isDarkMode ? "switch_btn_light" : "switch_btn_dark",
+  };
 
   return (
     <MotionBtn>
