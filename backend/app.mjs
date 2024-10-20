@@ -36,6 +36,11 @@ process.env.ADMIN_CODE =
     ? process.env.ADMIN_CODE_PROD
     : process.env.ADMIN_CODE_DEV;
 
+process.env.OAUTH_REDIRECT_URI =
+  process.env.NODE_ENV === "production"
+    ? process.env.OAUTH_REDIRECT_URI_PROD
+    : process.env.OAUTH_REDIRECT_URI_DEV;
+
 switch (process.env.NODE_ENV) {
   case "production":
     process.env.DB_URL = process.env.DB_URL_PROD;
