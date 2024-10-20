@@ -136,7 +136,7 @@ userRouter.get("/oauth/google", passport.authenticate("google"));
 
 /**
  * @swagger
- * /api/user/google/callback:
+ * /api/user/oauth/google/callback:
  *   get:
  *     summary: Handle Google OAuth callback for creating or binding.
  *     description: Handle Google OAuth callback to create a new user or bind to an existing user.
@@ -194,7 +194,7 @@ userRouter.get("/oauth/github", passport.authenticate("github"));
 
 /**
  * @swagger
- * /api/user/github/callback:
+ * /api/user/oauth/github/callback:
  *   get:
  *     summary: Handle Github OAuth callback for creating or binding.
  *     description: Handle Github OAuth callback to create a new user or bind to an existing user.
