@@ -1,9 +1,14 @@
 import React, { useEffect } from "react";
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { UserProvider, useUser } from "../src/contexts/userContext";
-import UserBtn from "../src/components/header/UserBtn";
+import { UserProvider, useUser } from "@/contexts/userContext";
+import UserBtn from "@/components/header/UserBtn";
+import { logout } from "@/services/apis/userApi";
+
+vi.mock("@/services/apis/userApi", () => ({
+  logout: vi.fn(),
+}));
 
 // Render the Dom with mocked the user context.
 const renderWithMockedUserContext = ({ isSetUser}) => {
@@ -38,10 +43,12 @@ describe("UserBtn test", () => {
 
   it("should display username and logout button when user is logged in", () => {
     renderWithMockedUserContext({ isSetUser: true });
-    const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(2);
-    expect(links[0]).toHaveAttribute("href", "/user/management");
-    expect(links[0]).toHaveTextContent("test");
-    expect(links[1]).toHaveAttribute("href", "/user/logout");
+    const links = screen.getByRole("link");
+    expect(links).toHaveAttribute("href", "/user/management");
+    expect(links).toHaveTextContent("test");
+    const logoutBtn = screen.getByTestId("logout");
+    expect(logoutBtn).toBeInTheDocument();
+    fireEvent.click(logoutBtn);
+    expect(logout).toHaveBeenCalled();
   });
 });
