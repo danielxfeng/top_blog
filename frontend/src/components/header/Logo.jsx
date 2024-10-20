@@ -7,7 +7,15 @@ const Logo = () => {
     // Semantic meaning for accessibility and SEO.
     <div aria-label="Blog">
       <a href="/">
-        <div className="flex items-center gap-1">
+        <motion.div
+          className="flex items-center gap-1"
+          whileHover={{
+            scale: 1.2,
+            transition: { duration: 0.3 },
+            ease: [0, 0.71, 0.2, 1.01],
+            
+          }}
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -43,7 +51,7 @@ const Logo = () => {
               log
             </span>
           </motion.div>
-        </div>
+        </motion.div>
       </a>
     </div>
   );
