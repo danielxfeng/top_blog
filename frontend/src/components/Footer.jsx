@@ -1,9 +1,10 @@
 import React from "react";
+import MotionLink from "./motionWrapper/MotionLink";
 
 const Footer = () => {
   return (
     <footer className="flex-none h-16 flex justify-around items-center">
-      <p>
+      <div>
         &copy; 2024{" "}
         <a
           className="underline"
@@ -11,12 +12,12 @@ const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Fancy Blog
+          <MotionLink>Fancy Blog</MotionLink>
         </a>
-      </p>
-      <p>
+      </div>
+      <div>
         Made by ❤️<em>Daniel</em>❤️
-      </p>
+      </div>
     </footer>
   );
 };
