@@ -121,7 +121,7 @@ userRouter.post("/login", userLoginController);
 
 /**
  * @swagger
- * /api/user/google:
+ * /api/user/oauth/google:
  *   get:
  *     summary: Oauth login with Google.
  *     description: Redirect to Google for OAuth login.
@@ -179,7 +179,7 @@ userRouter.get(
 
 /**
  * @swagger
- * /api/user/github:
+ * /api/user/oauth/github:
  *   get:
  *     summary: Oauth login with Github.
  *     description: Redirect to Github for OAuth login.
