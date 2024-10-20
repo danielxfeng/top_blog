@@ -26,23 +26,17 @@ describe("OauthCallback test", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-  
+
   it("successfully get the user", async () => {
     const setUser = vi.fn();
     useUser.mockReturnValue({ setUser });
-    Object.defineProperty(window, "location", {
-      value: {
-        search: "?token=test-token",
-      },
-      writable: true,
-    });
 
     const mockUser = { id: 1 };
     userLoginByToken.mockResolvedValueOnce(mockUser);
 
     // Render the component
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/oauth/callback?token=test-token"]}>
         <OauthCallback />
       </MemoryRouter>
     );
@@ -60,13 +54,6 @@ describe("OauthCallback test", () => {
     const setUser = vi.fn();
     useUser.mockReturnValue({ setUser });
 
-    Object.defineProperty(window, "location", {
-      value: {
-        search: "?token=test-token",
-      },
-      writable: true,
-    });
-
     const mockError = new Error("Failed to login");
     userLoginByToken.mockRejectedValueOnce(mockError);
 
@@ -76,7 +63,7 @@ describe("OauthCallback test", () => {
 
     // Render the component
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/oauth/callback?token=test-token"]}>
         <OauthCallback />
       </MemoryRouter>
     );
@@ -98,20 +85,13 @@ describe("OauthCallback test", () => {
     const setUser = vi.fn();
     useUser.mockReturnValue({ setUser });
 
-    Object.defineProperty(window, "location", {
-      value: {
-        search: "",
-      },
-      writable: true,
-    });
-
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
     // Render the component
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={["/oauth/callback?s=test-token"]}>
         <OauthCallback />
       </MemoryRouter>
     );
