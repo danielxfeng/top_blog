@@ -6,7 +6,6 @@ const UserContext = createContext();
 // Provides the user state and setUser function to its children.
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(getLocalStorage("user") || {});
-  console.log("user", user);
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
