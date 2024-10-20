@@ -30,6 +30,13 @@ const userRegister = async (username, password) => {
   return parseResponse(response);
 };
 
+// A helper function to login a user.
+const loginHelper = async(response) => {
+  const user = await parseResponse(response);
+  saveUserToLocalStorage(user);
+  return user;
+}
+
 /**
  * Login a user
  * See API documentation for more information.
@@ -40,9 +47,17 @@ const userLogin = async (username, password) => {
     `${host}/user/login`,
     getQuery("POST", { username, password })
   );
-  const user = await parseResponse(response);
-  saveUserToLocalStorage(user);
-  return user;
+  return loginHelper(response);
+};
+
+/**
+ * Login a user by token.
+ * See API documentation for more information.
+ * It also saves the user information to the local storage.
+ */
+const userLoginByToken = async () => {
+  const response = await fetch(`${host}/user/login`, getQuery("POST"));
+  return loginHelper(response);
 };
 
 /**
@@ -87,6 +102,7 @@ const logout = () => {
 export {
   userRegister,
   userLogin,
+  userLoginByToken,
   getUserInfo,
   updateUserInfo,
   deleteUser,
