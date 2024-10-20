@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { CiLogin } from "react-icons/ci";
+import { CiUser } from "react-icons/ci";
 import { CiLogout } from "react-icons/ci";
 import { useUser } from "../../contexts/userContext";
 import MotionBtn from "../motionWrapper/MotionBtn";
@@ -8,7 +8,7 @@ import MotionBtn from "../motionWrapper/MotionBtn";
 const UserBtn = () => {
   // The get user from the user context.
   const { user } = useUser();
-  const iconProps = { size: 32 };
+  const iconProps = { size: 24 };
 
   // Display username and the logout button if the user is logged in.
   // Otherwise, display the login button.
@@ -26,7 +26,7 @@ const UserBtn = () => {
   ) : (
     <MotionBtn>
       <Link to="/user/login">
-        <CiLogin {...iconProps} />
+        <CiUser {...iconProps} />
       </Link>
     </MotionBtn>
   );

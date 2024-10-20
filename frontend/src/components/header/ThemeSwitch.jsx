@@ -25,7 +25,7 @@ const ThemeSwitcher = () => {
   }, [isDarkMode]);
 
   const iconProps = {
-    size: 32,
+    size: 24,
     onClick: switchTheme,
     "data-testid": isDarkMode ? "switch_btn_light" : "switch_btn_dark",
   };
