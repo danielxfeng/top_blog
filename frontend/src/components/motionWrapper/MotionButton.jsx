@@ -54,14 +54,15 @@ ShadcnButton.displayName = "Button";
 const MotionButton = motion.create(ShadcnButton);
 
 // This is a ShadcnButton that adds motion, and with predefined variants.
-const Button = () => {
+const Button = ({children}) => {
   return (
     <MotionButton
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.9 }}
       transition={{ type: "spring", stiffness: 400, damping: 12 }}
+      className="w-full"
     >
-      Button
+      {children}
     </MotionButton>
   );
 };
