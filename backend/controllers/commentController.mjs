@@ -7,7 +7,6 @@ import {
   updateCommentValidation,
   deleteCommentValidation,
 } from "./commentValidators.mjs";
-import e from "express";
 
 // The model of select clauses for the comment entity.
 const selectModel = {

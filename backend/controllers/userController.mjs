@@ -169,13 +169,30 @@ const userLoginController = [
   userLoginValidation,
   validate,
   asyncHandler(async (req, res) => {
-    // For validation errors.
-    //const errors = validationResult(req);
-    //if (!errors.isEmpty()) {
-    //  return res.status(400).json({ message: errors.array() });
-    //}
+    // For OAuth login, we have checked the user in middleware.
+    if (req.user) {
+      const payload = {
+        id: req.user.id,
+        username: req.user.username,
+        isAdmin: req.user.isAdmin,
+      };
+      return res.json({
+        id: req.user.id,
+        username: req.user.username,
+        isAdmin: req.user.isAdmin,
+        token: sign(payload),
+      });
+    }
 
     const { username, password } = req.body;
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({
+          message:
+            "Username must be between 6 and 64 characters Username must be alphanumeric characters, and '_' or '-' Password must be between 6 and 64 characters",
+        });
+    }
 
     // Read from the database.
     const user = await prisma.blogUser.findFirst({
@@ -216,12 +233,13 @@ const userOauthCallbackController = asyncHandler(async (req, res) => {
     isAdmin: req.user.isAdmin,
   };
 
-  return res.json({
-    id: req.user.id,
-    username: req.user.username,
-    isAdmin: req.user.isAdmin,
-    token: sign(payload),
-  });
+  const token = sign(payload);
+
+  // Assemble the redirect URL.
+  const redirectUrl = `${process.env.OAUTH_REDIRECT_URI}?token=${token}`;
+
+  // Send the response.
+  return res.redirect(redirectUrl);
 });
 
 export {

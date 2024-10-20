@@ -74,6 +74,23 @@ describe("A normal user from registion to deletion", () => {
     expect(response.body.token).to.equal(token);
   });
 
+  it("Returns the same token when login by a token", async () => {
+    const response = await request(app)
+      .post("/api/user/login")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    expect(response.body).to.deep.equal({
+      id: id,
+      username: "testuser",
+      isAdmin: false,
+      token: response.body.token,
+    });
+    expect(response.body.token).to.be.a("string");
+
+    expect(response.body.token).to.equal(token);
+  });
+
   it("Returns 200 with new token when username is updated", async () => {
     const response = await request(app)
       .put("/api/user")

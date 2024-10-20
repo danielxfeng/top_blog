@@ -121,7 +121,7 @@ userRouter.post("/login", userLoginController);
 
 /**
  * @swagger
- * /api/user/google:
+ * /api/user/oauth/google:
  *   get:
  *     summary: Oauth login with Google.
  *     description: Redirect to Google for OAuth login.
@@ -136,7 +136,7 @@ userRouter.get("/oauth/google", passport.authenticate("google"));
 
 /**
  * @swagger
- * /api/user/google/callback:
+ * /api/user/oauth/google/callback:
  *   get:
  *     summary: Handle Google OAuth callback for creating or binding.
  *     description: Handle Google OAuth callback to create a new user or bind to an existing user.
@@ -179,7 +179,7 @@ userRouter.get(
 
 /**
  * @swagger
- * /api/user/github:
+ * /api/user/oauth/github:
  *   get:
  *     summary: Oauth login with Github.
  *     description: Redirect to Github for OAuth login.
@@ -194,7 +194,7 @@ userRouter.get("/oauth/github", passport.authenticate("github"));
 
 /**
  * @swagger
- * /api/user/github/callback:
+ * /api/user/oauth/github/callback:
  *   get:
  *     summary: Handle Github OAuth callback for creating or binding.
  *     description: Handle Github OAuth callback to create a new user or bind to an existing user.

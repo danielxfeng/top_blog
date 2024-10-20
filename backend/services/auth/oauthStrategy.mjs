@@ -1,4 +1,5 @@
 import { prisma } from "../../app.mjs";
+import passport from "passport";
 
 /**
  * Generate the options for the OAuth strategy.
@@ -11,9 +12,10 @@ const generateOptions = (provider, scope) => {
   return {
     clientID: process.env[`${provider.toUpperCase()}_CLIENT_ID`],
     clientSecret: process.env[`${provider.toUpperCase()}_CLIENT_SECRET`],
-    callbackURL: `/oauth/${provider}/callback`,
+    callbackURL: `/api/user/oauth/${provider}/callback`,
     scope,
     session: false,
+    passReqToCallback: true,
   };
 };
 
@@ -23,25 +25,25 @@ const generateOptions = (provider, scope) => {
  * @param {string} provider The provider name, "github" or "google".
  * @returns The verify function.
  */
-const generateVerifyFunc = (provider) => async (req, profile, done) => {
+const generateVerifyFunc = (provider) => async (req, accessToken, refreshToken, profile, done) => {
   // Find the user in the oauthUser table.
   try {
     let user = await prisma.blogOauthUser.findFirst({
       where: {
-        provider_subject: { provider, subject: profile.id },
-        BlogUser: { isDeleted: false },
+        provider: provider,
+        subject: profile.id,
+        user: { isDeleted: false },
       },
-      include: { BlogUser: true },
       select: {
-        BlogUser: { select: { id: true, username: true, isAdmin: true } },
+        user: { select: { id: true, username: true, isAdmin: true } },
       },
     });
 
     // If the user exists in the database:
     if (user) {
       // if the user is not logged in, or the loggin in user is the same.
-      if (!req.user || req.user.id === user.BlogUser.id)
-        return done(null, user.BlogUser);
+      if (!req.user || req.user.id === user.user.id)
+        return done(null, user.user);
       return done(new Error("This account has bound to other user."), null);
     }
     // If the user does not exist in the database:

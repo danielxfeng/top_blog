@@ -11,7 +11,7 @@ const userSignupValidation = [
     .withMessage("Password must be between 6 and 64 characters"),
 ];
 
-const userUpdateValidation = [
+const userLoginValidation = [
   body("username")
     .optional()
     .isLength({ min: 6, max: 64 })
@@ -22,14 +22,14 @@ const userUpdateValidation = [
     .optional()
     .isLength({ min: 6, max: 64 })
     .withMessage("Password must be between 6 and 64 characters"),
+];
+
+const userUpdateValidation = [
+  ...userLoginValidation,
   body("adminCode")
     .optional()
     .isLength({ min: 6, max: 64 })
     .withMessage("Admin code must be between 6 and 64 characters"),
 ];
-
-const userLoginValidation = [
-    ...userSignupValidation,
-  ];
 
 export { userSignupValidation, userUpdateValidation, userLoginValidation };

@@ -3,6 +3,8 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Home from "./pages/Home";
+import Login from "./pages/user/Login";
+import OauthCallback from "./pages/user/OauthCallback";
 import ErrorPage from "./pages/ErrorPage";
 import "./index.css";
 
@@ -16,6 +18,14 @@ const routerArray = [
       {
         path: "/",
         element: <Home />, // The home page.
+      },
+      {
+        path: "/user/login",
+        element: <Login />, // The login page.
+      },
+      {
+        path: "/user/oauth_callback",
+        element: <OauthCallback />, // The callback page for OAuth.
       },
     ],
   },
