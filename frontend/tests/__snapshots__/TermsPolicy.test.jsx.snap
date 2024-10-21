@@ -1,0 +1,210 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Terms Policy Page > should render the terms policy page 1`] = `
+<div>
+  <h1
+    class="mb-3 text-3xl font-semibold text-gradient"
+  >
+    Privacy and Terms
+  </h1>
+  <article>
+    <h2
+      class="mx-3 my-6 text-2xl font-semibold text-gradient"
+    >
+      Terms of Service
+    </h2>
+    <h3
+      class="mx-5 my-3"
+    >
+      Acceptance of Terms
+    </h3>
+    <p>
+      By using our service, you agree to comply with these Terms. If you do not agree, do not use the service.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Account Responsibilities
+    </h3>
+    <p>
+      You are responsible for maintaining the security of your account and any activities that occur under it.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      User Content
+    </h3>
+    <p>
+      You own your content but grant us a non-exclusive license to use, display, and distribute it on our platform. Ensure your content does not violate any laws.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Prohibited Activities
+    </h3>
+    <p>
+      You agree not to engage in unlawful activities, post harmful content, or use the platform for malicious purposes.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Termination of Service
+    </h3>
+    <p>
+      We may suspend or terminate your account at any time if you violate these terms.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Disclaimer of Warranties
+    </h3>
+    <p>
+      We provide the service "as-is" and make no warranties, express or implied, regarding the service's functionality or availability.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Limitation of Liability
+    </h3>
+    <p>
+      We are not responsible for any damages or losses resulting from your use of the platform.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Changes to Terms
+    </h3>
+    <p>
+      We reserve the right to update these Terms, and you will be notified of any significant changes.
+    </p>
+    <h2
+      class="mx-3 my-6 text-2xl font-semibold text-gradient"
+    >
+      Privacy Policy
+    </h2>
+    <p>
+      We respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and protect your information.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Data We Collect
+    </h3>
+    <ul
+      class="list-disc ml-8"
+    >
+      <li>
+        Personal details: name, email, etc., for account management and communication.
+      </li>
+      <li>
+        Site usage data: IP address, browser, OS, etc., for site optimization.
+      </li>
+      <li>
+        User-generated content: posts, comments, and interactions.
+      </li>
+    </ul>
+    <h3
+      class="mx-5 my-3"
+    >
+      Data Usage
+    </h3>
+    <ul
+      class="list-disc ml-8"
+    >
+      <li>
+        Provide, maintain, and improve our services.
+      </li>
+      <li>
+        Protect our users and ensure a safe environment.
+      </li>
+      <li>
+        For account-related communications and legal obligations.
+      </li>
+    </ul>
+    <h3
+      class="mx-5 my-3"
+    >
+      User Rights
+    </h3>
+    <ul
+      class="list-disc ml-8"
+    >
+      <li>
+        Access, rectification, deletion of personal data.
+      </li>
+    </ul>
+    <h3
+      class="mx-5 my-3"
+    >
+      Content Posted by Users
+    </h3>
+    <ul
+      class="list-disc ml-8"
+    >
+      <li>
+        Publicly accessible and can be viewed by others.
+      </li>
+      <li>
+        Do not post sensitive information.
+      </li>
+      <li>
+        Any content shared publicly will be retained unless you request removal.
+      </li>
+    </ul>
+    <h3
+      class="mx-5 my-3"
+    >
+      Policy Changes
+    </h3>
+    <p>
+      Any changes to this Privacy Policy will be posted here.
+    </p>
+    <h2
+      class="mx-3 my-6 text-2xl font-semibold text-gradient"
+    >
+      Cookies Policy
+    </h2>
+    <p>
+      We use cookies to improve user experience and provide essential services, including account logins, session management, and personalized content.
+    </p>
+    <p>
+      By using our site, you consent to the use of cookies. You can manage or disable cookies via your browser settings, but some features may not function properly without them.
+    </p>
+    <h3
+      class="mx-5 my-3"
+    >
+      Types of Cookies Used:
+    </h3>
+    <ul
+      class="list-disc ml-8"
+    >
+      <li>
+        Necessary cookies for website functionality.
+      </li>
+    </ul>
+    <h3
+      class="mx-5 my-3"
+    >
+      Managing Cookies:
+    </h3>
+    <ul
+      class="list-disc ml-8"
+    >
+      <li>
+        Most browsers allow you to disable cookies.
+      </li>
+      <li>
+        Disabling cookies may affect site functionality.
+      </li>
+    </ul>
+    <h3
+      class="mx-5 my-3"
+    >
+      Policy Changes
+    </h3>
+    <p>
+      Any changes to this Privacy Policy will be posted here.
+    </p>
+  </article>
+</div>
+`;
