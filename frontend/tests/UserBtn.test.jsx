@@ -45,7 +45,7 @@ describe("UserBtn test", () => {
     renderWithMockedUserContext({ isSetUser: true });
     const links = screen.getByRole("link");
     expect(links).toHaveAttribute("href", "/user/management");
-    expect(links).toHaveTextContent("test");
+    expect(links).toHaveTextContent("T");
     const logoutBtn = screen.getByTestId("logout");
     expect(logoutBtn).toBeInTheDocument();
     fireEvent.click(logoutBtn);
