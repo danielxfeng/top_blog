@@ -4,7 +4,9 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/user/Login";
+import Register from "./pages/user/Register";
 import OauthCallback from "./pages/user/OauthCallback";
+import TermsPolicy from "./pages/TermsPolicy";
 import ErrorPage from "./pages/ErrorPage";
 import "./index.css";
 
@@ -26,6 +28,14 @@ const routerArray = [
       {
         path: "/user/oauth_callback",
         element: <OauthCallback />, // The callback page for OAuth.
+      },
+      {
+        path: "/user/register",
+        element: <Register />, // The user regisration page.
+      },
+      {
+        path: "/termspolicy",
+        element: <TermsPolicy />, // The terms and policy page.
       },
     ],
   },
