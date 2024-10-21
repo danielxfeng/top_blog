@@ -95,6 +95,9 @@ const RegisterForm = () => {
       navigate("/user/login");
     } catch (error) {
       console.log(error);
+      // Reset the password and set the error message.
+      form.setValue("password", "");
+      form.setValue("confirmPassword", "");
       form.setValue("isSubmitted", false);
       setResInfo({
         type: "error",

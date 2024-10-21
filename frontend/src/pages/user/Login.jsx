@@ -82,11 +82,12 @@ const LoginForm = () => {
 
       // Save the user to global context.
       setUser(user);
-
       // Redirect to the homepage.
       navigate("/");
     } catch (error) {
       console.log(error);
+      // Reset the password and set the error message.
+      form.setValue("password", "");
       form.setValue("isSubmitted", false);
       setResInfo({
         type: "error",
