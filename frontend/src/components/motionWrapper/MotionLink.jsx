@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 // The children will be scaled up when hovered.
 const MotionLink = ({ children }) => {
   return (
-    <motion.div
-      className="inline-block"
+    <motion.span
+      className="inline-block underline"
       whileHover={{
         scale: 1.1,
         transition: { duration: 0.2 },
@@ -14,7 +14,7 @@ const MotionLink = ({ children }) => {
       whileTap={{ scale: 0.9 }}
     >
       {children}
-    </motion.div>
+    </motion.span>
   );
 };
 
