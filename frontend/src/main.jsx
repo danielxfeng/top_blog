@@ -5,6 +5,7 @@ import App from "./App";
 import Home from "./pages/Home";
 import Login from "./pages/user/Login";
 import Register from "./pages/user/Register";
+import UserManagement from "./pages/user/UserManagement";
 import OauthCallback from "./pages/user/OauthCallback";
 import TermsPolicy from "./pages/TermsPolicy";
 import ErrorPage from "./pages/ErrorPage";
@@ -32,6 +33,10 @@ const routerArray = [
       {
         path: "/user/register",
         element: <Register />, // The user regisration page.
+      },
+      {
+        path: "/user/management",
+        element: <UserManagement />, // The user regisration page.
       },
       {
         path: "/termspolicy",
