@@ -120,31 +120,39 @@ const userUpdateController = [
       ...isAdmin,
     };
 
-    // Update the database.
-    const user = await prisma.blogUser.update({
-      where: { id: req.user.id, isDeleted: false },
-      data: updatedValue,
-      select: {
-        id: true,
-        username: true,
-        isAdmin: true,
-      },
-    });
+    try {
+      // Update the database.
+      const user = await prisma.blogUser.update({
+        where: { id: req.user.id, isDeleted: false },
+        data: updatedValue,
+        select: {
+          id: true,
+          username: true,
+          isAdmin: true,
+        },
+      });
 
-    // Prepare the JWT payload.
-    const payload = {
-      id: user.id,
-      username: user.username,
-      isAdmin: user.isAdmin,
-    };
+      // Prepare the JWT payload.
+      const payload = {
+        id: user.id,
+        username: user.username,
+        isAdmin: user.isAdmin,
+      };
 
-    // Send the response.
-    return res.json({
-      id: user.id,
-      username: user.username,
-      isAdmin: user.isAdmin,
-      token: sign(payload),
-    });
+      // Send the response.
+      return res.json({
+        id: user.id,
+        username: user.username,
+        isAdmin: user.isAdmin,
+        token: sign(payload),
+      });
+    } catch (error) {
+      if (error.code === "P2025")
+        return res.status(404).json({ message: "User not found" });
+      if (error.code === "P2002")
+        return res.status(400).json({ message: "Username already exists" });
+      throw error;
+    }
   }),
 ];
 
@@ -186,12 +194,10 @@ const userLoginController = [
 
     const { username, password } = req.body;
     if (!username || !password) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Username must be between 6 and 64 characters Username must be alphanumeric characters, and '_' or '-' Password must be between 6 and 64 characters",
-        });
+      return res.status(400).json({
+        message:
+          "Username must be between 6 and 64 characters Username must be alphanumeric characters, and '_' or '-' Password must be between 6 and 64 characters",
+      });
     }
 
     // Read from the database.
