@@ -72,6 +72,9 @@ const userSignupController = [
       isAdmin: user.isAdmin,
     };
 
+    const { accessToken, refreshToken } = sign(payload);
+    req.session.refresh_token = refreshToken;
+
     // Send the response.
     return res
       .status(201)
@@ -80,7 +83,7 @@ const userSignupController = [
         id: user.id,
         username: user.username,
         isAdmin: user.isAdmin,
-        token: sign(payload),
+        token: accessToken,
       });
   }),
 ];
@@ -140,12 +143,17 @@ const userUpdateController = [
         isAdmin: user.isAdmin,
       };
 
+      const { accessToken, refreshToken } = sign(payload);
+
+      // Set the refresh token in the session.
+      req.session.refresh_token = refreshToken;
+
       // Send the response.
       return res.json({
         id: user.id,
         username: user.username,
         isAdmin: user.isAdmin,
-        token: sign(payload),
+        token: accessToken,
       });
     } catch (error) {
       if (error.code === "P2025")
@@ -173,6 +181,8 @@ const userDeleteController = asyncHandler(async (req, res) => {
     },
   });
 
+  req.refresh_token = null;
+
   return res.status(204).json({ message: "User deleted" });
 });
 
@@ -190,11 +200,15 @@ const userLoginController = [
         username: req.user.username,
         isAdmin: req.user.isAdmin,
       };
+
+      const { accessToken, refreshToken } = sign(payload);
+
+      req.session.refresh_token = refreshToken;
       return res.json({
         id: req.user.id,
         username: req.user.username,
         isAdmin: req.user.isAdmin,
-        token: sign(payload),
+        token: accessToken,
       });
     }
 
@@ -224,12 +238,17 @@ const userLoginController = [
       isAdmin: user.isAdmin,
     };
 
+    const { accessToken, refreshToken } = sign(payload);
+
+    // Set the refresh token in the session.
+    req.session.refresh_token = refreshToken;
+
     // Send the response.
     return res.json({
       id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
-      token: sign(payload),
+      token: accessToken,
     });
   }),
 ];
@@ -254,13 +273,48 @@ const userOauthCallbackController = asyncHandler(async (req, res) => {
     isAdmin: req.user.isAdmin,
   };
 
-  const token = sign(payload);
+  const { refreshToken } = sign(payload);
+  req.session.refresh_token = refreshToken;
 
   // Assemble the redirect URL.
-  const redirectUrl = `${process.env.OAUTH_REDIRECT_URI}?token=${token}`;
+  const redirectUrl = `${process.env.OAUTH_REDIRECT_URI}`;
 
   // Send the response.
   return res.redirect(redirectUrl);
+});
+
+// @desc    Update the token
+// @route   GET /api/user/token
+// @access  Private
+const userUpdateTokenController = asyncHandler(async (req, res) => {
+  const refreshToken = req.session.refresh_token;
+
+  // We check the refresh token in the session.
+  if (!refreshToken)
+    return res.status(401).json({ message: "No refresh token found" });
+
+  // We set the refresh token in the session, and return the new access token.
+  jwt.verify(refreshToken, process.env.JWT_SECRET_REFRESH, (err, user) => {
+    if (err) return res.status(401).json({ message: "Invalid refresh token" });
+
+    const payload = {
+      id: user.id,
+      username: user.username,
+      isAdmin: user.isAdmin,
+    };
+
+    const { accessToken, newRefreshToken } = sign(payload);
+
+    req.session.refresh_token = newRefreshToken;
+    user.token = accessToken;
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      isAdmin: user.isAdmin,
+      access_token: accessToken,
+    });
+  });
 });
 
 export {
@@ -271,4 +325,5 @@ export {
   userLoginController,
   userOauthController,
   userOauthCallbackController,
+  userUpdateTokenController,
 };

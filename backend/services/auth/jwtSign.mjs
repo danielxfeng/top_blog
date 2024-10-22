@@ -11,18 +11,32 @@ const isLegalPayload = (payload) => {
   );
 };
 
+// Helper function for signing a JWT token.
+const signHelper = (payload, secret, expiresIn) => {
+  return jwt.sign(payload, secret, { expiresIn });
+};
+
 /**
  * Sign a JWT token with the payload.
- * 
+ *
  * @param {object} payload { id, username, isAdmin }
- * @returns the JWT token
+ * @returns {object} { accessToken, refreshToken }
  */
 const sign = (payload) => {
   if (!isLegalPayload(payload)) throw new Error("Illegal payload");
   try {
-    return jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    });
+    return {
+      accessToken: signHelper(
+        payload,
+        process.env.JWT_SECRET,
+        process.env.JWT_EXPIRES_IN
+      ),
+      refreshToken: signHelper(
+        payload,
+        process.env.JWT_SECRET_REFRESH,
+        process.env.JWT_EXPIRES_IN_REFRESH
+      ),
+    };
   } catch (error) {
     throw new Error("Failed to sign the token");
   }

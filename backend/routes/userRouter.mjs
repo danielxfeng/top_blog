@@ -10,6 +10,7 @@ import {
   userLoginController,
   userOauthController,
   userOauthCallbackController,
+  userUpdateTokenController,
 } from "../controllers/userController.mjs";
 
 /**
@@ -237,6 +238,40 @@ userRouter.get(
   githubAuth,
   userOauthCallbackController
 );
+
+/**
+ * @swagger
+ * /api/user/token:
+ *   get:
+ *     summary: Update the JWT token
+ *     description: Update the JWT token for an authenticated user using the refresh token.
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: JWT token updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   description: The user ID
+ *                 username:
+ *                   type: string
+ *                   description: The registered username
+ *                 isAdmin:
+ *                   type: boolean
+ *                   description: Indicates if the user has admin privileges
+ *                 access_token:
+ *                   type: string
+ *                   description: New JWT access token
+ *       401:
+ *         description: Unauthorized - Invalid or missing refresh token
+ *       500:
+ *         description: Server error
+ */
+userRouter.get("/token", userUpdateTokenController);
 
 //
 // The following routes require authentication.
