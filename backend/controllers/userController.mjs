@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import { prisma } from "../app.mjs";
+import passport from "passport";
 import sign from "../services/auth/jwtSign.mjs";
 import validate from "../services/validate.mjs";
 import {
@@ -164,7 +165,12 @@ const userDeleteController = asyncHandler(async (req, res) => {
   // Soft delete the user.
   await prisma.blogUser.update({
     where: { id: req.user.id, username: req.user.username, isDeleted: false },
-    data: { isDeleted: true, deletedAt: new Date(), username: newUserName },
+    data: {
+      isDeleted: true,
+      deletedAt: new Date(),
+      username: newUserName,
+      oauths: { deleteMany: {} },
+    },
   });
 
   return res.status(204).json({ message: "User deleted" });
@@ -228,6 +234,15 @@ const userLoginController = [
   }),
 ];
 
+// @desc    OAuth login
+// @route   GET /api/user/oauth/"provider"
+// @access  Public
+const userOauthController = (provider) =>
+  asyncHandler(async (req, res, next) => {
+    const userData = req.query.state ? req.query.state : {};
+    passport.authenticate(provider, { state: userData })(req, res, next);
+  });
+
 // @desc    OAuth callback
 // @route   GET /api/user/"provider"/callback
 // @access  Public
@@ -254,5 +269,6 @@ export {
   userUpdateController,
   userDeleteController,
   userLoginController,
+  userOauthController,
   userOauthCallbackController,
 };

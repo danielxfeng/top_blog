@@ -1,5 +1,4 @@
 import express from "express";
-import passport from "passport";
 import { auth } from "../services/auth/jwtStrategy.mjs";
 import { googleAuth } from "../services/auth/googleStrategy.mjs";
 import { githubAuth } from "../services/auth/githubStrategy.mjs";
@@ -9,6 +8,7 @@ import {
   userUpdateController,
   userDeleteController,
   userLoginController,
+  userOauthController,
   userOauthCallbackController,
 } from "../controllers/userController.mjs";
 
@@ -132,7 +132,7 @@ userRouter.post("/login", userLoginController);
  *       500:
  *         description: Server error
  */
-userRouter.get("/oauth/google", passport.authenticate("google"));
+userRouter.get("/oauth/google", userOauthController("google"));
 
 /**
  * @swagger
@@ -190,7 +190,7 @@ userRouter.get(
  *       500:
  *         description: Server error
  */
-userRouter.get("/oauth/github", passport.authenticate("github"));
+userRouter.get("/oauth/github", userOauthController("github"));
 
 /**
  * @swagger
