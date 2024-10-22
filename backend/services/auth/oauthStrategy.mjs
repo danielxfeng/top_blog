@@ -26,7 +26,8 @@ const generateOptions = (provider, scope) => {
  * @returns The verify function.
  */
 const generateVerifyFunc =
-  (provider) => async (req, accessToken, refreshToken, profile, done) => {
+  (provider) => async (req, drop, profile1, profile2, done) => {
+    const profile = profile1 || profile2;
     try {
       const state = JSON.parse(req.query.state);
       req.user = { id: state.userId };
