@@ -51,14 +51,12 @@ const userLogin = async (username, password) => {
 };
 
 /**
- * Login a user by token.
- * See API documentation for more information.
- * It also saves the user information to the local storage.
+ * Update user's access token by refresh token
  */
-const userLoginByToken = async () => {
-  const response = await fetch(`${host}/user/login`, getQuery("POST"));
+const getToken = async () => {
+  const response = await fetch(`${host}/user/token`, getQuery("GET"));
   return loginHelper(response);
-};
+}
 
 /**
  * Get a user's information
@@ -114,7 +112,7 @@ const getOauthLoginLink = (provider) => {
 export {
   userRegister,
   userLogin,
-  userLoginByToken,
+  getToken,
   getUserInfo,
   updateUserInfo,
   deleteUser,

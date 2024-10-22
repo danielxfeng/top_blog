@@ -3,19 +3,14 @@ import { render, waitFor } from "@testing-library/react";
 import { MemoryRouter, Navigate } from "react-router-dom";
 import OauthCallback from "@/pages/user/OauthCallback";
 import { useUser } from "@/contexts/userContext";
-import { setLocalStorage } from "@/services/storage/storage";
-import { userLoginByToken } from "@/services/apis/userApi";
+import { getToken } from "@/services/apis/userApi";
 
 vi.mock("@/contexts/userContext", () => ({
   useUser: vi.fn(),
 }));
 
-vi.mock("@/services/storage/storage", () => ({
-  setLocalStorage: vi.fn(),
-}));
-
 vi.mock("@/services/apis/userApi", () => ({
-  userLoginByToken: vi.fn(),
+  getToken: vi.fn(),
 }));
 
 describe("OauthCallback test", () => {
@@ -32,20 +27,17 @@ describe("OauthCallback test", () => {
     useUser.mockReturnValue({ setUser });
 
     const mockUser = { id: 1 };
-    userLoginByToken.mockResolvedValueOnce(mockUser);
+    getToken.mockResolvedValueOnce(mockUser);
 
     // Render the component
     render(
-      <MemoryRouter initialEntries={["/oauth/callback?token=test-token"]}>
+      <MemoryRouter initialEntries={["/oauth/callback"]}>
         <OauthCallback />
       </MemoryRouter>
     );
 
     await waitFor(() => {
-      expect(setLocalStorage).toHaveBeenCalledWith("user", {
-        token: "test-token",
-      });
-      expect(userLoginByToken).toHaveBeenCalled();
+      expect(getToken).toHaveBeenCalled();
       expect(setUser).toHaveBeenCalledWith(mockUser);
     });
   });
@@ -55,7 +47,7 @@ describe("OauthCallback test", () => {
     useUser.mockReturnValue({ setUser });
 
     const mockError = new Error("Failed to login");
-    userLoginByToken.mockRejectedValueOnce(mockError);
+    getToken.mockRejectedValueOnce(mockError);
 
     const consoleErrorSpy = vi
       .spyOn(console, "error")
@@ -63,47 +55,17 @@ describe("OauthCallback test", () => {
 
     // Render the component
     render(
-      <MemoryRouter initialEntries={["/oauth/callback?token=test-token"]}>
+      <MemoryRouter initialEntries={["/oauth/callback"]}>
         <OauthCallback />
       </MemoryRouter>
     );
 
     // Assertions
     await waitFor(() => {
-      expect(setLocalStorage).toHaveBeenCalledWith("user", {
-        token: "test-token",
-      });
-      expect(userLoginByToken).toHaveBeenCalled();
+      expect(getToken).toHaveBeenCalled();
       expect(setUser).not.toHaveBeenCalled();
       expect(consoleErrorSpy).toHaveBeenCalledWith(mockError);
     });
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("will do nothing when token is not found", async () => {
-    const setUser = vi.fn();
-    useUser.mockReturnValue({ setUser });
-
-    const consoleErrorSpy = vi
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    // Render the component
-    render(
-      <MemoryRouter initialEntries={["/oauth/callback?s=test-token"]}>
-        <OauthCallback />
-      </MemoryRouter>
-    );
-
-    // Assertions
-    await waitFor(() => {
-      expect(consoleErrorSpy).toHaveBeenCalled();
-    });
-
-    expect(setLocalStorage).not.toHaveBeenCalled();
-    expect(userLoginByToken).not.toHaveBeenCalled();
-    expect(setUser).not.toHaveBeenCalled();
 
     consoleErrorSpy.mockRestore();
   });

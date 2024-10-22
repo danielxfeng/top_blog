@@ -31,6 +31,7 @@ const getQuery = (method, body = null) => {
     mode: "cors",
     method: method,
     headers: getHeaders(),
+    credentials: "include",
     ...bodyData,
   };
 };

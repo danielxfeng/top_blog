@@ -1,11 +1,51 @@
-import React, { useState, useContext, createContext } from "react";
+import React, { useState, useContext, createContext, useEffect } from "react";
 import { getLocalStorage } from "../services/storage/storage";
+import { getToken } from "../services/apis/userApi";
 
 const UserContext = createContext();
 
-// Provides the user state and setUser function to its children.
+const gap = 5 * 60 * 1000; // 5 minutes
+
+// A helper function to check if the token is near expiration.
+const isNearExpiration = (token) => {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = atob(base64);
+    const decoded = JSON.parse(jsonPayload);
+
+    const currentTime = Date.now();
+    const expirationTime = decoded.exp * 1000;
+    const timeLeft = expirationTime - currentTime;
+
+    return timeLeft < gap;
+  } catch (error) {
+    console.error("Failed to parse JWT", error);
+    return true;
+  }
+};
+
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(getLocalStorage("user") || {});
+
+  // Check if the token is near expiration every 5 minutes.
+  useEffect(() => {
+    const updateToken = async () => {
+      if (user && user.token && isNearExpiration(user.token)) {
+        try {
+          const updatedUser = await getToken();
+          if (updatedUser && updatedUser.id) setUser(updatedUser);
+        } catch (error) {
+          console.error("Failed to refresh token", error);
+        }
+      }
+    };
+
+    const interval = setInterval(updateToken, gap);
+
+    return () => clearInterval(interval);
+  }, [user, setUser]);
+
   return (
     <UserContext.Provider value={{ user, setUser }}>
       {children}
@@ -13,9 +53,6 @@ const UserProvider = ({ children }) => {
   );
 };
 
-// The convenience hook to use the user state and setUser function.
-// This hook must be used within a UserProvider.
-// This hook provides the user state: id, username, isAdmin, and token.
 const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
