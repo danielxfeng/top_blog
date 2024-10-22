@@ -16,6 +16,7 @@ import {
   getUserInfo,
   updateUserInfo,
   deleteUser,
+  getOauthLoginLink,
 } from "@/services/apis/userApi";
 import {
   Form,
@@ -230,20 +231,24 @@ const OauthBtns = ({ userInfo }) => {
       {userInfo.oauths.some((oauth) => oauth.provider === "google") ? (
         <FcGoogle size={oauthBtnSize} opacity={0.3} />
       ) : (
-        <a href={`${oauthApiAddress}google`}>
-          <MotionBtn>
-            <FcGoogle size={oauthBtnSize} />
-          </MotionBtn>
-        </a>
+        <MotionBtn
+          onClick={() => {
+            window.location.href = getOauthLoginLink("google");
+          }}
+        >
+          <FcGoogle size={oauthBtnSize} />
+        </MotionBtn>
       )}
       {userInfo.oauths.some((oauth) => oauth.provider === "github") ? (
         <IoLogoGithub size={oauthBtnSize} opacity={0.3} />
       ) : (
-        <a href={`${oauthApiAddress}github`}>
-          <MotionBtn>
-            <IoLogoGithub size={oauthBtnSize} />
-          </MotionBtn>
-        </a>
+        <MotionBtn
+          onClick={() => {
+            window.location.href = getOauthLoginLink("github");
+          }}
+        >
+          <IoLogoGithub size={oauthBtnSize} />
+        </MotionBtn>
       )}
       <div>|</div>;
       <AlertDialog>
@@ -266,6 +271,7 @@ const OauthBtns = ({ userInfo }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      <ResInfo resInfo={resInfo} />
     </div>
   );
 };

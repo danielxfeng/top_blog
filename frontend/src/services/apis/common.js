@@ -35,4 +35,18 @@ const getQuery = (method, body = null) => {
   };
 };
 
-export { host, parseResponse, getQuery };
+// A helper function to get the query for OAuth.
+const getOauthQuery = (provider) => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      const state = JSON.stringify({ userId: user.id });
+      return `${host}/user/oauth/${provider}?state=${state}`;
+    }
+  } catch {
+    return `${host}/user/oauth/${provider}`;
+  }
+
+};
+
+export { host, parseResponse, getQuery, getOauthQuery };

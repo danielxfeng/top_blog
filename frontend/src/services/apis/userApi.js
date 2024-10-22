@@ -1,4 +1,4 @@
-import { host, parseResponse, getQuery } from "./common";
+import { host, parseResponse, getQuery, getOauthQuery } from "./common";
 
 // A helper function to save the user information to the local storage.
 const saveUserToLocalStorage = (user) => {
@@ -31,11 +31,11 @@ const userRegister = async (username, password) => {
 };
 
 // A helper function to login a user.
-const loginHelper = async(response) => {
+const loginHelper = async (response) => {
   const user = await parseResponse(response);
   saveUserToLocalStorage(user);
   return user;
-}
+};
 
 /**
  * Login a user
@@ -99,6 +99,18 @@ const logout = () => {
   removeUserFromLocalStorage();
 };
 
+/**
+ * Return the link of oauth login.
+ * If user is logged in, the user id is passed as the state.
+ * Otherwise, the state is empty.
+ *
+ * @param {string} provider is "github" or "google"
+ * @returns {string} the link for oauth login
+ */
+const getOauthLoginLink = (provider) => {
+  return getOauthQuery(provider);
+};
+
 export {
   userRegister,
   userLogin,
@@ -107,4 +119,5 @@ export {
   updateUserInfo,
   deleteUser,
   logout,
+  getOauthLoginLink,
 };
