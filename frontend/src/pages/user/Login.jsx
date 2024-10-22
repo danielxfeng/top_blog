@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -21,8 +21,8 @@ import MainWrapper from "@/components/MainWrapper";
 import { Button } from "@/components/motionWrapper/MotionButton";
 import { useUser } from "@/contexts/userContext";
 import MotionBtn from "@/components/motionWrapper/MotionBtn";
+import MotionLink from "@/components/motionWrapper/MotionBtn";
 import { userLogin } from "@/services/apis/userApi";
-import { setLocalStorage } from "@/services/storage/storage";
 
 // Constant valus for returning message.
 const successMsg = "Login successfully, will redirect you to Homepage!";
@@ -144,23 +144,40 @@ const LoginForm = () => {
 // Deal with the Oauth Login.
 const OauthBtns = () => {
   return (
-    <div className="flex items-center gap-8">
-      <a href={`${oauthApiAddress}google`}>
-        <MotionBtn>
-          <FcGoogle size={oauthBtnSize} />
-        </MotionBtn>
-      </a>
-      <a href={`${oauthApiAddress}github`}>
-        <MotionBtn>
-          <IoLogoGithub size={oauthBtnSize} />
-        </MotionBtn>
-      </a>
-      <div>|</div>
-      <a href="/user/register">
-        <MotionBtn>
-          <GrUserNew size={oauthBtnSize} />
-        </MotionBtn>
-      </a>
+    <div className="flex flex-col items-center gap-4">
+      <div className="flex items-center gap-8">
+        <a href={`${oauthApiAddress}google`}>
+          <MotionBtn>
+            <FcGoogle size={oauthBtnSize} />
+          </MotionBtn>
+        </a>
+        <a href={`${oauthApiAddress}github`}>
+          <MotionBtn>
+            <IoLogoGithub size={oauthBtnSize} />
+          </MotionBtn>
+        </a>
+        <div>|</div>
+        <a href="/user/register">
+          <MotionBtn>
+            <GrUserNew size={oauthBtnSize} />
+          </MotionBtn>
+        </a>
+      </div>
+      <div className="flex flex-col items-center">
+        <p className="text-xs">
+          By clicking the above buttons, you may register an account.
+        </p>
+        <p className="text-xs">
+          {" "}
+          By doing so, you acknowledge that you have read and agree to our{" "}
+          <Link to="/termspolicy" className="inline-block underline">
+            <MotionLink>
+              Terms of Service, Privacy Policy, and Cookies Policy
+            </MotionLink>
+          </Link>
+          .
+        </p>
+      </div>
     </div>
   );
 };

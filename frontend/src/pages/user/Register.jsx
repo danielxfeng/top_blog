@@ -19,7 +19,7 @@ import MainWrapper from "@/components/MainWrapper";
 import { Button } from "@/components/motionWrapper/MotionButton";
 import { useUser } from "@/contexts/userContext";
 import { userRegister } from "@/services/apis/userApi";
-import MotionLink from "../../components/motionWrapper/MotionLink";
+import MotionLink from "@/components/motionWrapper/MotionLink";
 
 // Constant valus for returning message.
 const successMsg = "Registration successfully, will redirect you to Homepage!";
@@ -158,7 +158,6 @@ const RegisterForm = () => {
           )}
         />
         {/**  Consent field. */}
-
         <FormField
           control={form.control}
           name="consent"
