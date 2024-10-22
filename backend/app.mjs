@@ -1,5 +1,7 @@
 import express from "express";
 import envdot from "dotenv";
+import session from "express-session";
+import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { PrismaClient } from "@prisma/client";
 import cors from "cors";
 import createError from "http-errors";
@@ -40,6 +42,11 @@ process.env.OAUTH_REDIRECT_URI =
   process.env.NODE_ENV === "production"
     ? process.env.OAUTH_REDIRECT_URI_PROD
     : process.env.OAUTH_REDIRECT_URI_DEV;
+
+process.env.CORS_ORIGIN =
+  process.env.NODE_ENV === "production"
+    ? process.env.CORS_ORIGIN_PROD
+    : process.env.CORS_ORIGIN_DEV;
 
 switch (process.env.NODE_ENV) {
   case "production":
@@ -86,10 +93,34 @@ export const app = express();
 
 // Enable CORS
 var corsOptions = {
-  origin: "*",
+  origin: process.env.CORS_ORIGIN,
   optionsSuccessStatus: 200,
+  credentials: true,
 };
 app.use(cors(corsOptions));
+
+/**
+ * The Prisma client for database access. Export for controllers.
+ */
+export const prisma = new PrismaClient();
+
+// Session configuration
+app.use(
+  session({
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, //ms
+    }),
+    secret: process.env.FOO_COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    },
+  })
+);
 
 // Parse incoming requests
 app.use(express.json());
@@ -134,18 +165,12 @@ app.use((req, res, next) => {
 // Set the status code and send the error message as JSON.
 // Only show the error message in development.
 app.use((err, req, res, next) => {
-  if (process.env.NODE_ENV !== "production")
-    console.error(err);
+  if (process.env.NODE_ENV !== "production") console.error(err);
   let msg = err.message;
   msg = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
   res.json({ error: msg });
 });
-
-/**
- * The Prisma client for database access. Export for controllers.
- */
-export const prisma = new PrismaClient();
 
 // Disconnect the Prisma client when the server ends
 process.on("SIGINT", async () => {
