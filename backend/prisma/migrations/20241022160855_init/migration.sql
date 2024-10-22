@@ -57,6 +57,16 @@ CREATE TABLE "BlogComment" (
 );
 
 -- CreateTable
+CREATE TABLE "Session" (
+    "id" TEXT NOT NULL,
+    "sid" TEXT NOT NULL,
+    "data" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_BlogPostToBlogTag" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -76,6 +86,9 @@ CREATE UNIQUE INDEX "BlogTag_tag_key" ON "BlogTag"("tag");
 
 -- CreateIndex
 CREATE INDEX "BlogComment_postId_updatedAt_idx" ON "BlogComment"("postId", "updatedAt" DESC);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Session_sid_key" ON "Session"("sid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_BlogPostToBlogTag_AB_unique" ON "_BlogPostToBlogTag"("A", "B");

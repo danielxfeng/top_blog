@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model BlogUser {
@@ -64,4 +64,12 @@ model BlogComment {
   isDeleted Boolean  @default(false)
 
   @@index([postId, updatedAt(sort: Desc)])
+}
+
+// For @quixo3/prisma-session-store
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }
