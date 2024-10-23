@@ -30,7 +30,12 @@ const generateVerifyFunc =
   (provider) => async (req, drop, profile1, profile2, done) => {
     const profile = profile1 || profile2;
     try {
-      const state = JSON.parse(req.query.state);
+      const session = req.session;
+      console.log(req.session.state);
+      const state =
+        provider === "github"
+          ? JSON.parse(req.query.state)
+          : JSON.parse(req.query.stateGoogle);
       req.user = { id: state.userId };
     } catch (error) {
       req.user = null;
@@ -100,6 +105,14 @@ const generateVerifyFunc =
  * @returns The middleware function.
  */
 const generateOauthAuthMidware = (provider) => async (req, res, next) => {
+  // For google, passport will send CSRF token in the state.
+  // And then, it save the user's state in the session.
+  // But don't know why, they delete the state below.
+  // So, we just keep it before deletion.
+  // So sad there is no documentation about this.
+  if (provider === "google")
+    req.query.stateGoogle =
+      req.session["openidconnect:accounts.google.com"].state.state;
   passport.authenticate(provider, async (err, user) => {
     if (err) return res.status(401).json({ message: err.message });
     if (!user)
