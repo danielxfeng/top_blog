@@ -28,6 +28,22 @@ const isNearExpiration = (token) => {
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(getLocalStorage("user") || {});
 
+   // Listen to localStorage changes
+   useEffect(() => {
+    const handleStorageChange = () => {
+      const updatedUser = getLocalStorage("user");
+      setUser(updatedUser);
+    };
+
+    // Add event listener for localStorage changes
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   // Check if the token is near expiration every 5 minutes.
   useEffect(() => {
     const updateToken = async () => {
@@ -41,7 +57,7 @@ const UserProvider = ({ children }) => {
       }
     };
 
-    const interval = setInterval(updateToken, gap);
+    const interval = setInterval(updateToken, gap / 5);
 
     return () => clearInterval(interval);
   }, [user, setUser]);
