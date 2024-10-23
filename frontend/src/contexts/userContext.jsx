@@ -31,8 +31,8 @@ const UserProvider = ({ children }) => {
    // Listen to localStorage changes
    useEffect(() => {
     const handleStorageChange = () => {
-      const updatedUser = getLocalStorage("user");
-      setUser(updatedUser);
+      let newUser = getLocalStorage("user");
+      newUser = newUser && newUser.id ? newUser : {};
     };
 
     // Add event listener for localStorage changes
