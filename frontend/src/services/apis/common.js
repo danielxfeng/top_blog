@@ -3,6 +3,7 @@ const host = "http://localhost:3000/api";
 // A helper function to parse the JSON response body.
 const parseResponse = async (response) => {
   if (!response.ok) {
+    if (response.status === 401) return localStorage.removeItem("user");
     const content = await response.json();
     throw new Error(content.message || "Unknown error");
   }
