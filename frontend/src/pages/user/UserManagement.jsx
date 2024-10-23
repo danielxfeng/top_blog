@@ -291,8 +291,8 @@ const Content = () => {
         if (userInfo && userInfo.id) setUserInfo(userInfo);
       } catch (error) {
         console.log(error);
-        // Redirect to the home page if the user info is not available.
-        navigate("/");
+        // Redirect to Login page when the user info is not available.
+        navigate("/user/login");
       }
     };
 
