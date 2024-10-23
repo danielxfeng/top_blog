@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import { prisma } from "../app.mjs";
 import passport from "passport";
+import jwt from "jsonwebtoken";
 import sign from "../services/auth/jwtSign.mjs";
 import validate from "../services/validate.mjs";
 import {

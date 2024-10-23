@@ -164,10 +164,10 @@ const OauthBtns = () => {
         </a>
       </div>
       <div className="flex flex-col items-center">
-        <p className="text-xs">
+        <div className="text-xs">
           By clicking the above buttons, you may register an account.
-        </p>
-        <p className="text-xs">
+        </div>
+        <div className="text-xs">
           {" "}
           By doing so, you acknowledge that you have read and agree to our{" "}
           <Link to="/termspolicy" className="inline-block underline">
@@ -176,7 +176,7 @@ const OauthBtns = () => {
             </MotionLink>
           </Link>
           .
-        </p>
+        </div>
       </div>
     </div>
   );

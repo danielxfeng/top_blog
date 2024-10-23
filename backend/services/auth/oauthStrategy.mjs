@@ -14,6 +14,7 @@ const generateOptions = (provider, scope) => {
     clientSecret: process.env[`${provider.toUpperCase()}_CLIENT_SECRET`],
     callbackURL: `/api/user/oauth/${provider}/callback`,
     scope,
+    state: true,
     session: false,
     passReqToCallback: true,
   };
