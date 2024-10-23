@@ -312,7 +312,7 @@ const userUpdateTokenController = asyncHandler(async (req, res) => {
       id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
-      access_token: accessToken,
+      token: accessToken,
     });
   });
 });
