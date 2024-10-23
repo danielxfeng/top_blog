@@ -50,8 +50,6 @@ const formSchema = z.object({
 // The Login Form.
 const LoginForm = () => {
   const navigate = useNavigate();
-  // The function to set user from the global context.
-  const { setUser } = useUser();
   // The response info from server.
   const [resInfo, setResInfo] = useState({});
 
@@ -79,9 +77,6 @@ const LoginForm = () => {
         type: "ok",
         msg: successMsg,
       });
-
-      // Save the user to global context.
-      setUser(user);
       // Redirect to the homepage.
       navigate("/");
     } catch (error) {

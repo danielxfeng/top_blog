@@ -50,7 +50,7 @@ const oauthBtnSize = 48;
 const ManageForm = ({ userInfo }) => {
   const navigate = useNavigate();
   // The function to set user from the global context.
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const [resInfo, setResInfo] = useState({});
 
   // The validation schema for Login form.
@@ -129,8 +129,6 @@ const ManageForm = ({ userInfo }) => {
         msg: successMsg,
       });
 
-      // Save the user to global context.
-      setUser(updatedUser);
       // Redirect to the homepage.
       navigate("/");
     } catch (error) {
@@ -208,7 +206,6 @@ const ManageForm = ({ userInfo }) => {
 
 // Deal with the Oauth Login.
 const OauthBtns = ({ userInfo }) => {
-  const { setUser } = useUser();
   const [resInfo, setResInfo] = useState({});
   const navigate = useNavigate();
 
@@ -218,7 +215,6 @@ const OauthBtns = ({ userInfo }) => {
       setResInfo({});
       await deleteUser();
       setResInfo({ type: "ok", msg: successMsg });
-      setUser({});
       navigate("/");
     } catch (error) {
       console.log(error);

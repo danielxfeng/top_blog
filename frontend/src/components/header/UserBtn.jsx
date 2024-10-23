@@ -9,12 +9,11 @@ import { logout } from "@/services/apis/userApi";
 
 const UserBtn = () => {
   // The get user from the user context.
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const iconProps = { size: 24 };
 
   // The logout function.
   const handleLogout = () => {
-    setUser({});
     logout();
   };
 
