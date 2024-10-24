@@ -30,17 +30,18 @@ const UserProvider = ({ children }) => {
 
    // Listen to localStorage changes
    useEffect(() => {
-    const handleStorageChange = () => {
-      let newUser = getLocalStorage("user");
+    const handleStorageChange = (event) => {
+      let newUser = event.detail.value;
       newUser = newUser && newUser.id ? newUser : {};
+      setUser(newUser);
     };
 
     // Add event listener for localStorage changes
-    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("localStorageUpdate", handleStorageChange);
 
     // Cleanup the event listener when the component unmounts
     return () => {
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("localStorageUpdate", handleStorageChange);
     };
   }, []);
 

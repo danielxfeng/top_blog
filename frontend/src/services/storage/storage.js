@@ -19,7 +19,15 @@ const getLocalStorage = (key) => {
  */
 const setLocalStorage = (key, value) => {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    const newValue = JSON.stringify(value);
+    if (newValue !== JSON.stringify(getLocalStorage(key))) {
+      console.log(`Setting ${key} to local storage, value: ${newValue}`);
+      localStorage.setItem(key, newValue);
+      // We notify the context that the local storage has been updated.
+      window.dispatchEvent(
+        new CustomEvent("localStorageUpdate", { detail: { key, value } })
+      );
+    }
   } catch (error) {
     console.error(`Error setting ${key} to local storage `, error);
   }
